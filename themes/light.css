@@ -1,0 +1,44 @@
+
+blockquote,div,section,code,math,
+exercise,example,definition,figure {
+  padding: 4px;
+  margin: 4px;
+  border-radius: 4px;
+}
+[block],figure {
+  display: block;
+}
+a {
+  color: darkblue;
+}
+blockquote,figure {
+  background-color: lightblue;
+}
+math {
+  display: inline;
+  color: darkslategray;
+  background-color: lightblue;
+  font-style: italic;
+}
+code {
+  background-color: lightgray;
+  color: darkslategray;
+  box-shadow: inset 0px 3px 3px #000000A0;
+}
+pre>code {display: block;}
+
+nav {
+  background-color: cornflowerblue;
+  color: white;
+  padding: 4px;
+  padding-right: 8px;
+}
+
+main {
+  background-color: whitesmoke;
+  color: black;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 4px;
+}

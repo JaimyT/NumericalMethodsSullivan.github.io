@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Numerical Methods - Algebra</title>
+    <meta name="" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <style>
+      blockquote,div,section,code,math,exercise,example,definition,figure {
+        padding: 4px;
+        margin: 4px;
+        border-radius: 4px;
+      }
+      [block],figure {display: block;}
+      a {color: darkblue;}
+      blockquote,figure {background-color: lightblue;}
+      math {
+        display: inline;
+        color: darkslategray;
+        background-color: lightblue;
+        font-style: italic;
+      }
+      code {
+        background-color: lightgray;
+        color: darkslategray;
+      }
+      pre>code {display: block;}
+    </style>
+  </head>
+  <body>
+    <section id="intro-to-numerical-root-finding">
+      <h2>2.1 - Intro to Numerical Root Finding</h2>
+      <blockquote>
+        The golden rule of numerical analysis: <em>
+          We compute only when everything else fails.
+        </em>
+      </blockquote>
+      <p>
+        In this chapter we want to solve equations using a computer.
+        The goal of equation solving is to find the value of the independent
+        variable which makes the equation true.
+        These are the sorts of equations that you learned to solve in high
+        school algebra and pre-calcuclus. For a very simple example, <em>
+          solve for <math>\(x\)</math> if <math>\(x+5 = 2x - 3\)</math>.
+        </em> Or for another example, the equation
+        <math>\(\sin(x) = \frac{\sqrt{2}}{2}\)</math> is an equation which can
+        be solved using some knowledge of trigonometry. The topic of Numerical
+        Root Finding really boils down to approximating the solutions to equations
+        <em>without</em> using all of the by-hand techniques that you learned
+        in high school. The down side to everything that we're about to do is
+        that our answers are only ever going to be approximations.
+        To see a video introduction to this chapter go to
+        <a href="https://youtu.be/W2yL9IVmv2A">
+          https://youtu.be/W2yL9IVmv2A
+        </a>.<br/>
+        The fact that we will only ever get approximate answers begs the
+        question: <em>why would we want to do numerical algebra if
+        by-hand techniques exist?</em> The answers are relatively simple:
+      </p> <ul>
+        <li>
+          By-hand algebra is often very challenging, quite time consuming,
+          and error prone. You will find that the numerical techniques are
+          quite elegant, work very quickly, and require very little overhead
+          to actually implement and verify.
+        </li> <li>
+          Most equations do not lend themselves to by-hand solutions.
+          The techniques that we know from high school algebra solve common,
+          and often quite simplified, problems but when equations arise naturally
+          they are often not <em>nice</em>.
+        </li>
+      </ul> <p>
+        Let's first take a look at equations in a more abstract way. Consider
+        the equation <math>\(\ell(x) = r(x)\)</math> where <math>\(\ell(x)\)</math>
+        and <math>\(r(x)\)</math> stand for left-hand and right-hand expressions
+        respectively. To begin solving this equation we can first rewrite it by
+        subtracting the right-hand side from the left to get
+        <math block>\[ \ell(x) - r(x) = 0.\]</math>
+        Hence, we can define a function <math>\(f(x)\)</math> as
+        <math>\(f(x)=\ell(x)-r(x)\)</math> and observe that <strong>every</strong>
+        equation can be written as:
+        <math block>\[ \text{If } f(x) = 0, \text{ find } x. \]</math>
+        This gives us a common language for which to frame all of our numerical algorithms.
+      </p> <p>
+        For example, if we want to solve the equation
+        <math>\(3\sin(x) + 9 = x^2 - \cos(x)\)</math>
+        then this is the same as solving
+        <math>\((3\sin(x) + 9 ) - (x^2 - \cos(x)) = 0\)</math>.
+        We illustrate this idea in Figure
+        <a href="ch-algebra.html#fig:root-finding-intro">2.1</a>.
+        You should pause and notice that there is no way that you are going to
+        apply by-hand techniques from algebra to solve this equation...
+        an approximate answer is pretty much our
+        <a href="https://www.youtube.com/watch?v=5cc_h5Ghuj4">only hope</a>.
+      </p>
+      <figure id="fig2.1">
+        <img src="images/Ch02Sec01_IntroRootFinding.png" alt="A Typical Root Finding Problem" width="90%" />
+        <p class="caption">Figure 2.1: A Typical Root Finding Problem</p>
+      </figure>
+      <p>
+        On the left-hand side of Figure
+        <a href="#chapter=2&bookmark=fig2.1">2.1</a>
+        we see the solutions to the equation
+        <math>\(3\sin(x) + 9 = x^2 - \cos(x)\)</math>,
+        and on the right-hand side we see the solutions to the equation
+        <math block>\[
+          \left( 3\sin(x)+9 \right) -
+          \left( x^2 - \cos(x) \right) = 0.
+        \]</math>
+        From the plots it is apparent that the two equations have the same solutions:
+        <math>\(x_1 \approx -2.55\)</math> and <math>\(x_2 \approx 2.88\)</math>.
+        Figure <a href="#chapter=2&bookmark=fig2.1">2.1</a>
+        should demonstrate what we mean when we say that solving equations of
+        the form <math>\(\ell(x) = r(x)\)</math> will give the same answer as solving
+        <math>\(f(x) = 0\)</math>. Pause for a moment and closely examine the plots
+        to verify this for yourself. <br/>
+        We now have one way to view every equation-solving problem. As we'll see
+        in this chapter, if <math>\(f(x)\)</math> has certain properties then different
+        numerical techniques for solving the equation will apply - and some will
+        be much faster and more accurate than others.
+        The following sections give several different techniques for solving equations
+        of the form <math>\(f(x) = 0\)</math>. We will start with the simplest techniques
+        to implement and then move to the more powerful techniques that require some
+        ideas from Calculus to understand and analyze. Throughout this chapter we will
+        also work to quantify the amount of error that we make while using these techniques.
+      </p>
+    </section>
+    <hr style="page-break-after: always;"/>
+    <section id="2.2">
+      <h2>2.2 - The Bisection Method</h2>
+      <section id="2.2.1">
+        <h3>2.2.1 - Intuition and Implementation</h3>
+        <exercise id="exr2.1">
+          <h3>Exercise 2.1</h3> <p>
+            A friend tells you that she is thinking of a number between 1 and 100.
+            She will allow you multiple guesses with some feedback for where the
+            mystery number falls. How do you systematically go about guessing the
+            mystery number? Is there an optimal strategy? <br/>
+            For example, the conversation might go like this.
+          </p>
+          <ul>
+            <li>Sally: I'm thinking of a number between 1 and 100</li>
+            <li>Joe: Is it 35?</li>
+            <li>Sally: No, but the number is between 35 and 100</li>
+            <li>Joe: Is it 99?</li>
+            <li>Sally: No, but the number is between 35 and 99</li>
+            <li>...</li>
+          </ul>
+        </exercise>
+        <hr/>
+
+        <exercise id="exr2.2">
+          <h3>Exercise 2.2</h3> <p>
+            Now let's say that Sally has a continuous function that has a root
+            somewhere between <math>\(x=2\)</math> and <math>\(x=10\)</math>.
+            Modify your strategy from the number guessing game in the previous
+            problem to narrow down where the root is.
+          </p>
+        </exercise>
+        <hr/>
+
+        <exercise id="exr2.3">
+          <h3>Exercise 2.3</h3> <p>
+            Was it necessary to say that Sally's function was continuous?
+            Could your technique work if the function were not continuous.
+          </p>
+        </exercise>
+      </section>
+    </section>
+  </body>
+</html>

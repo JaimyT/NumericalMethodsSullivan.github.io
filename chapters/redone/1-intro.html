@@ -1,0 +1,2131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Numerical Methods - Introduction</title>
+    <meta name="" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <style>
+      blockquote,div,section,code,math,exercise,example,definition,figure {
+        padding: 4px;
+        margin: 4px;
+        border-radius: 4px;
+      }
+      [block],figure {display: block;}
+      a {color: darkblue;}
+      blockquote,figure {background-color: lightblue;}
+      math {
+        display: inline;
+        color: darkslategray;
+        background-color: lightblue;
+        font-style: italic;
+      }
+      code {
+        background-color: lightgray;
+        color: darkslategray;
+      }
+      pre>code {display: block;}
+    </style>
+  </head>
+  <body>
+    <section id="preliminaries">
+      <h1>1 - Preliminary Topics</h1>
+      <section id="1.1">
+        <h2>1.1 - What <em>is</em> Numerical Analysis?</h2>
+        <blockquote><em>
+          "In the 1950s and 1960s, the founding fathers of Numerical Analysis
+          discovered that inexact arithmetic can be a source of danger, causing
+          errors in results that 'ought' to be right. The source of such problems
+          is numerical instability: that is, the amplification of rounding
+          errors from microscopic to macroscopic scale by certain modes of computation."
+          </em><br/>
+          <a href="https://en.wikipedia.org/wiki/NickTrefethen">
+            Oxford Professor Lloyd (Nick) Trefethen (2006)
+          </a>
+        </blockquote> <p>
+          The field of Numerical Analysis is really the study of how to take
+          mathematical problems and perform them efficiently and accurately
+          on a computer. While the field of numerical analysis is quite powerful
+          and wide-reaching, there are some mathematical problems where numerical
+          analysis doesn't make much sense (e.g. finding an algebraic derivative
+          of a function, proving a theorem, uncovering a pattern in a sequence).
+          However, for many problems, a numerical method that gives an approximate
+          answer is both more efficient and more versatile than any analytic
+          technique. Let's look at several examples.
+          You can also watch a short introduction video here:
+          <a href="https://youtu.be/yH0zhca0hbs">youtu.be/...</a>
+        </p> <dl>
+          <dt>Example from Algebra:</dt> <dd>
+            <p>
+              Solve the equation <math>\(\ln(x) = \sin(x)\)</math> for
+              <math>\(x\)</math> in the interval <math>\(x \in (0,\pi)\)</math>.
+              Stop and think about all of the algebra that you ever learned.
+              You'll quickly realize that there are no by-hand techniques that
+              can solve this problem! A numerical approximation, however, is not
+              so hard to come by.
+            </p>
+          </dd>
+          <dt>Example from Calculus:</dt> <dd>
+            <p>
+              What if we want to evaluate the following integral?<br/>
+              <math>\[ \int_0^\pi \sin(x^2) dx \]</math><br/>
+              Again, trying to use any of the possible techniques for using the
+              Fundamental Theorem of Calculus, and hence finding an
+              antiderivative, on the function <math>\(\sin(x^2)\)</math>
+              is completely hopeless. Substitution, integration by parts, and all
+              of the other techniques that you know will all fail. Again, a
+              numerical approximation is not so difficult and is very fast!
+              By the way, this integral (called the
+              <a href="https://en.wikipedia.org/wiki/Fresnel_integral">Fresnel Sine Integral</a>
+              ) actually shows up naturally in the field of optics and
+              electromagnetism, so it is not just some arbitrary integral that
+              I cooked up just for fun.
+            </p>
+          </dd>
+          <dt>Example from Differential Equations:</dt> <dd>
+            <p>
+              Say we needed to solve the differential equation
+              <math>\(\frac{dy}{dt} = \sin(y^2) + t.\)</math>
+              The nonlinear nature of the problem precludes us from using most of
+              the typical techniques (e.g. separation of variables, undetermined
+              coefficients, Laplace Transforms, etc). However, computational methods
+              that result in a plot of an approximate solution can be made very
+              quickly and likely give enough of a solution to be usable.
+            </p>
+          </dd>
+          <dt>Example from Linear Algebra:</dt> <dd>
+            <p>
+              You have probably never row reduced a matrix larger than
+              <math>\(3\times 3\)</math> or perhaps <math>\(4 \times 4\)</math>
+              by hand. Instead, you often turn to technology to do the row reduction
+              for you. You may be surprised to find that the standard row reduction
+              algorithm (RREF) that you do by hand is not what a computer uses.
+              Instead, there are efficient algorithms to do the basic operations
+              of linear algebra (e.g. Gaussian elimination, matrix factorization,
+              or eigenvalue decomposition)
+            </p>
+          </dd>
+        </dl> <p>
+          In this chapter we will discuss some of the basic underlying ideas in
+          Numerical Analysis, and the essence of the above quote from Nick
+          Trefethen will be part of the focus of this chapter. Particularly, we
+          need to know how a computer stores numbers and when that storage can get
+          us into trouble. On a more mathematical side, we offer a brief review of
+          the Taylor Series from Calculus at the end of this chapter. The Taylor
+          Series underpins many of our approximation methods in this class.
+          Finally, at the end of this chapter we provide several coding exercises
+          that will help you to develop your programming skills. It is expected
+          that you know some of the basics of programming before beginning this
+          class. If you need to review the basics then see Appendix
+          <a href="#chapter=python">A</a>.<br/>
+          You'll have more than just the basics by the end.<br/>
+          Let's begin.
+        </p>
+      </section>
+      <hr style="page-break-after: always;"/>
+      <section id="1.2">
+        <h2>1.2 - Arithmetic in Base 2</h2>
+        <exercise id="exr1.1">
+          <h3>Exercise 1.1</h3> <p>
+            By hand (no computers!) compute the first 50 terms of this sequence
+            with the initial condition <math>\(x_0 = 1/10\)</math>.<br/>
+            <math block>
+              \[x_{n+1} = \left\{
+                \begin{array}{ll} 2x_n, &amp;
+                x_n \in [0,\frac{1}{2}] \\ 2x_n - 1, &amp;
+                x_n \in (\frac{1}{2},1])
+                \}\end{array}
+              \right.\]
+            </math>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.2">
+          <h3>Exercise 1.2</h3> <p>
+            Now use a spreadsheet to do the same computations.
+            Do you get the same answers?
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.3">
+          <h3>Exercise 1.3</h3> <p>
+            Finally, solve this problem with Python.
+            Some starter code is given to you below.
+          </p> <pre><code class="language-python">
+            x = 1.0/10
+            for n in range(50):
+              if x &lt;= 0.5:
+                # put the correct assignment here
+              else:
+                # put the correct assignment here
+              print(x)
+          </code></pre>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.4">
+          <h3>Exercise 1.4</h3> <p>
+            It seems like the computer has failed you!
+            What do you think happened on the computer and why did it give you
+            a different answer? What, do you suppose, is the cuationary tale
+            hiding behind the scenes in this problem?
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.5">
+          <h3>Exercise 1.5</h3> <p>
+            Now what happens with this problem when you start with
+            <math>\(x_0 = 1/8\)</math>?
+            Why does this new initial condition work better?
+          </p>
+        </exercise>
+        <hr/>
+        <p>
+          A computer circuit knows two states: on and off. As such, anything saved
+          in computer memory is stored using base-2 numbers. This is called a
+          binary number system. To fully understand a binary number system it is
+          worth while to pause and reflect on our base-10 number system for a few
+          moments.
+        </p> <p>
+          What do the digits in the number <math>\(735\)</math>
+          really mean? The position of each digit tells us something
+          particular about the magnitude of the overall number.
+          The number <math>\(735\)</math> can be represented as
+          a sum of powers of <math>\(10\)</math> as
+          <math block>
+            \[735 =
+              700 + 30 + 5 =
+              7 \times 10^2 +
+              3 \times 10^1 +
+              5 \times 10^0
+            \]
+          </math>
+          and we can read this number as
+          <math>\(7\)</math> hundreds,
+          <math>\(3\)</math> tens, and
+          <math>\(5\)</math> ones.
+          As you can see, in a "positional number system" such as our
+          base-10 system, the position of the number indicates the power of
+          the base, and the value of the digit itself tells you the
+          multiplier of that power. This is contrary to number systems
+          like Roman Numerals where the symbols themselves give us the number,
+          and meaning of the position is somewhat flexible. The number
+          "48,329" can therefore be interpreted as
+          <math>
+            \[48,329 =
+              40,000 + 8,000 + 300 + 20 + 9 =
+              4 \times 10^4 + 8 \times 10^3 + 3 \times 10^2 + 2
+              \times 10^1 + 9 \times 10^0
+            \]
+          </math><br/>
+          Four ten-thousands, eight thousands,
+          three hundreds, two tens, and nine ones.
+        </p> <p>
+          Now let's switch to the number system used by computers: the binary
+          number system. In a binary number system the base is 2 so the only
+          allowable digits are 0 and 1 (just like how, in base-10, the
+          allowable digits were 0 through 9). In binary (base-2),
+          the number "<math>\(101,101\)</math>" can be
+          interpreted as
+          <math>
+            \[101,101_2 = 1 \times
+            2^5 + 0 \times 2^4 +
+            1 \times 2^3 +
+            1 \times 2^2 +
+            0 \times 2^1 +
+            1 \times 2^0\]
+          </math> (where the subscript "2" indicates the base to the reader).
+          If we put this back into base 10, so that we can read it more
+          comfortably, we get
+          <math>\[101,101_2 = 32 + 0 + 8 + 4 + 0 + 1 = 45_{10}.\]</math>
+          The reader should take note that the commas in the numbers are only
+          to allow for greater readability - we can easily see groups of three
+          digits and mentally keep track of what we're reading.
+        </p>
+        <hr/>
+        <exercise id="exr1.6">
+          <h3>Exercise 1.6</h3> <p>
+            Express the following binary numbers in base-10.
+          </p> <ol style="list-style-type: lower-alpha;">
+            <li><math>\(111_2\)</math></li>
+            <li><math>\(10,101_2\)</math></li>
+            <li><math>\(1,111,111,111_2\)</math></li>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.7">
+          <h3>Exercise 1.7</h3> <p>
+            Explain the joke: <em>
+              There are 10 types of people.
+              Those who understand binary, and those who don't.
+            </em>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.8">
+          <h3>Exercise 1.8</h3> <p>
+            Discussion: With your group, discuss how you would convert a
+            base-10 number into its binary representation. Once you have a
+            proposed method, put it into action on the number
+            <math>\(237_{10}\)</math>
+            to show that the base-2 expression is
+            <math>\(11,101,101_2\)</math>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.9">
+          <h3>Exercise 1.9</h3> <p>
+            <ul>              
+              <li>Write <math>\(12_{10}\)</math> in binary</li>
+              <li>Write <math>\(11_{10}\)</math> in binary</li>
+              <li>Write <math>\(23_{10}\)</math> in binary</li>
+              <li>Write <math>\(11_2\)</math> in base 10</li>
+              <li>
+                What is <math>\(100101_2\)</math>
+                in base <math>\(10\)</math>?
+              </li>
+            </ul>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.10">
+          <h3>Exercise 1.10</h3> <p>
+            Now that you have converted several base-10 numbers to base-2,
+            summarize and efficient technique to do the conversion.
+          </p>
+        </exercise>
+        <hr/>
+        <example id="exm1.1">
+          <h3>Example 1.1</h3> <p>
+            Convert the number 137 from base 10 to base 2.<br/>
+            <strong>Solution:</strong><br/>
+            One way to do the conversion is to first look for the
+            largest power of 2 less than or equal to your number.
+            In this case, <math>\(128=2^7\)</math> is the largest
+            power of 2 that is less than 137. Then looking at the
+            remainder, 9, look for the largest power of 2 that is
+            less than this remainder. Repeat until you have the
+            number.<br/> <math>
+              \[\begin{aligned}
+                137_{10} &amp;= 128 + 8 + 1 \\
+                &amp;= 2^7 + 2^3 + 2^0 \\
+                &amp;= 1 \times 2^7 + 0 \times 2^6 + 0 \times 2^5  + 0 \times 2^4  + 1 \times 2^3  + 0
+                \times 2^2  + 0 \times 2^1  + 1 \times 2^0  \\
+                &amp;= 10001001_2
+              \end{aligned}\]
+            </math>
+          </p>
+        </example>
+        <hr/>
+        <p>
+          Next we'll work with fractions and decimals. For example, let's take
+          the base 10 number <math>\(5.341_{10}\)</math> and expand it out to
+          get <math>
+            \[5.341_{10} = 5 + \frac{3}{10} +
+            \frac{4}{100} + \frac{1}{1000} = 5
+            \times 10^0 + 3 \times 10^{-1} + 4
+            \times 10^{-2} + 1 \times 10^{-3}.\]
+          </math>
+          The position to the right of the decimal point is the negative power
+          of 10 for the given position. We can do a similar thing with fractional
+          binary numbers.
+        </p>
+
+        <exercise id="exr1.11">
+          <h3>Exercise 1.11</h3> <p>
+            The base-2 number <math>\(1,101.01_2\)</math> can be expanded
+            in powers of 2. Fill in the question marks below and observe
+            the pattern in the powers.<br/>
+            <math>\[
+              1,101.01_2 = ? \times 2^3 +
+              1 \times 2^2 + 0 \times 2^1 +
+              ? \times 2^0 + 0 \times 2^{?} +
+              1 \times 2^{-2}.\]
+            </math>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.12">
+          <h3>Exercise 1.12</h3> <p>
+            Repeating digits in binary numbers are rather intriguing.
+            The number <math>\(0.\overline{0111} = 0.01110111011101110111\ldots\)</math>
+            surely also has a decimal representation. I'll get you started: <br/>
+            <math>
+              \[\begin{aligned}
+                0.0_2 &amp;= 0 \times 2^0 + 0 \times 2^{-1} = 0.0_{10} \\
+                0.01_2 &amp;= 0.0_{10} + 1 \times 2^{-2} = 0.25_{10} \\
+                0.011_2 &amp;= 0.25_{10} + 1 \times 2^{-3} = 0.25_{10} + 0.125_{10} = 0.375_{10} \\
+                0.0111_2 &amp;= 0.375_{10} + 1 \times 2^{-4} = 0.4375_{10} \\
+                0.01110_2 &amp;= 0.4375_{10} + 0 \times 2^{-5} = 0.4375_{10} \\
+                0.011101_2 &amp;= 0.4375_{10} + 1 \times 2^{-6} = 0.453125_{10} \\
+                \vdots &amp; \qquad \qquad \vdots \qquad \qquad \qquad \vdots
+              \end{aligned}\]
+            </math><br/>
+            We want to know what this series converges to in base 10.
+            Work with your partners to approximate the base-10 number.
+          </p>
+        </exercise>
+        <hr/>
+        <example id="exm1.2">
+          <h3>Solution: </h3> <p>
+            <math>
+              \[\begin{aligned}
+                11.01011_2 &amp;= 2 + 1 + \frac{0}{2} + \frac{1}{4} + \frac{0}{8} + \frac{1}{16} +
+                \frac{1}{32} \\ &amp;= 1 \times 2^1 + 1 \times 2^0 + 0 \times 2^{-1} + 1 \times 2^{-2} + 0
+                \times 2^{-3} + 1 \times 2^{-4} + 1 \times 2^{-5}\\ &amp;= 3.34375_{10}.
+              \end{aligned}\]
+            </math>
+          </p>
+        </example>
+        <hr/>
+        <exercise id="exr1.13">
+          <h3>Exercise 1.12</h3> <ol>
+            <li>What is <math>\(1/2\)</math> in binary?</li>
+            <li>What is <math>\(1/8\)</math> in binary?</li>
+            <li>What is <math>\(4.125\)</math> in binary?</li>
+            <li>What is <math>\(0.15625\)</math> in binary?</li>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.14">
+          <h3>Exercise 1.14</h3> <ol>
+            <li>
+              Multiply <math>\(0.635\)</math> by 2.
+              The whole number part is the first binary digit to the right
+              of the fullstop.
+            </li> <li>
+              Take the result of the previous multiplication and ignore
+              the digit to the left of the fulsltop. Multiply the remaining
+              value by 2. The whole number part is the second fractional
+              binary digit.
+            </li> <li>
+              Repeat the previous step until you have nothing left,
+              until a repeating pattern has appeared, or until your
+              precision is close enough.
+            </li> <p>
+              Explain why each step gives the binary digit that it does.
+            </p>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.15">
+          <h3>Exercise 1.15</h3> <p>
+            Based on your previous problem, write an algorithm that will
+            convert base-10 decimals (less than 1) to base decimal expansions.
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.16">
+          <h3>Exercise 1.16</h3> <p>
+            Convert the base 10 fraction <math>\(1/10\)</math> into binary.
+            Use your solution to fully describe what went wrong in the exercise
+            <a href="#chapter=intro&bookmark=exr1.1">1.1</a>.
+          </p>
+        </exercise>
+      </section>
+      <hr style="page-break-after: always;"/>
+      <section id="1.3">
+        <h2>1.3 - Floating Point Arithmetic</h2>
+        <p>
+          Everything stored in the memory of a computer is a number,
+          but how does a computer actually store a number?
+          More specifically, since computers only have finite memory,
+          we would really like to know the full range of
+          numbers that are possible to store in a computer.
+          Moreover, since there is finite space in a computer we
+          can only ever store rational numbers
+          (stop and think: why is this?). Therefore we need to know
+          what gaps in our number system to expect when using a
+          computer to store and do computations on numbers.
+        </p>
+        <hr/>
+        <exercise id="exr1.17">
+          <h3>Exercise 1.17</h3> <p>
+            Let's start the discussion with a a very concrete example.
+            Consider the number <math>\(x = -123.15625\)</math> (in base 10).
+            As we've seen this number can be converted into binary. Indeed
+            <math>\[x = -123.15625_{10} = -1111011.00101_2\]</math>
+            (you should check this).
+          </p> <ol>
+            <li>
+              If a computer needs to store this number then first they put in
+              the binary version of scientific notation. In this case we write
+              <math>\[
+                x = -1. \underline{\hspace{1in}} \times
+                2^{\underline{\hspace{0.25in}}}
+              \]</math>
+            </li> <li>
+              Based on the fact that every binary number, other than 0,
+              can be written in this way, what three things do you suppose a
+              computer needs to store for any given number?
+            </li> <li>
+              Using your answer to part (b), what would a computer need to store
+              for the binary number <math>\(x=10001001.1100110011_2\)</math>?
+            </li>
+          </ol>
+        </exercise>
+        <hr/> <p>
+          For any base-2 number <math>\(x\)</math> we can write
+          <math>\[x = (-1)^{s} \times (1+ m) \times 2^E\]</math> where
+          <math>\(s \in \{0,1\}\)</math> is called the <em>sign bit</em> and
+          <math>\(m\)</math> is a binary number such that
+          <math>\(0 \le m &lt; 1\)</math>.
+        </p>
+        <p>
+          For a number <math>\(x = (-1)^{s} \times (1+m) \times 2^E\)</math>
+          stored in a computer, the number <math>\(m\)</math> is called
+          the <strong>mantissa</strong> or the <strong>significand</strong>,
+          <math>\(s\)</math> is known as the sign bit, and <math>\(E\)</math>
+          is known as the exponent.
+        </p>
+        <example id="exm1.3">
+          <h3>Example 1.3</h3> <p>
+            What are the mantissa, sign bit, and exponent for the numbers
+            <math>\(7_{10}\)</math>, <math>\(-7_{10}\)</math>, and
+            <math>\((0.1)_{10}\)</math>?
+          </p> <h3>Solution:</h3> <ul>
+            <li>
+              For the number <math>\(7_{10}=111_2 = 1.11 \times 2^2\)</math>
+              we have <math>\(s=0\)</math>, <math>\(m=0.11\)</math>, and
+              <math>\(E=2\)</math>.
+            </li> <li>
+              For the number <math>\(-7_{10}=111_2 = -1.11 \times 2^2\)</math>
+              we have <math>\(s=1\)</math>, <math>\(m=0.11\)</math> and
+              <math>\(E=2\)</math>.
+            </li> <li>
+              For the number
+              <math>\(
+                \frac{1}{10} = 0.000110011001100\cdots = 1.100110011 \times 2^{-4}
+              \)</math> we have <math>\(s=0\)</math>,
+              <math>\(m=0.100110011\cdots\)</math>, and
+              <math>\(E = -4\)</math>.
+            </li>
+          </ul>
+        </example>
+        <hr/>
+        <p>
+          In the last part of the previous example we saw that the number
+          <math>\((0.1)_{10}\)</math> is actually a repeating decimal in
+          base-2. This means that in order to completely represent the number
+          <math>\((0.1)_{10}\)</math> in base-2 we need infinitely many decimal
+          places. Obviously that can't happen since we are dealing with computers
+          with finite memory. Over the course of the past several decades there
+          have been many systems developed to properly store numbers. The IEEE
+          standard that we now use is the accumulated effort of many computer
+          scientists, much trial and error, and deep scientific research.
+          We now have three standard precisions for storing numbers on a
+          computer: single, double, and extended precision. The single and
+          double precision standards are what most of our modern computers use.
+        </p>
+        <hr/>
+        <definition id="def1.1">
+          <h3>Definition 1.1</h3> <p>
+            There are three standard precisions for storing numbers in a computer.
+          </p> <ul>
+            <li>
+              A <strong>single-precision</strong> number consists of 32 bits,
+              with 1 bit for the sign, 8 for the exponent, and 23 for the
+              significand.
+            </li> <li>
+              A <strong>double-precision</strong> number consists of 64 bits with 1
+              bit for the sign, 11 for the exponent, and 52 for the significand.
+            </li> <li>
+              An <strong>extended-precision</strong> number consists of 80 bits,
+              with 1 bit for the sign, 15 for the exponent, and 64 for the significand.
+            </li>
+          </ul>
+        </definition>
+        <hr/>
+        <definition id="def1.2">
+          <h3>Definition 1.2</h3> <p>
+            (<strong>machine precision</strong>) Machine precision is the gap
+            between the number 1 and the next larger floating point number. Often it
+            is represented by the symbol <math>\(\epsilon\)</math>. To clarify, the
+            number 1 can always be stored in a computer system exactly and if
+            <math>\(\epsilon\)</math> is machine precision for that computer
+            then <math>\(1+\epsilon\)</math> is the next largest number that can
+            be stored with that machine.
+          </p>
+        </definition>
+        <hr/>
+        <p>
+          For all practical purposes the computer cannot tell the difference
+          between two numbers if the difference is smaller than machine precision.
+          This is of the utmost important when you want to check that something is
+          "zero" since a computer just cannot know the difference between
+          <math>\(0\)</math> and <math>\(\epsilon\)</math>.
+        </p>
+        <exercise id="exr1.18">
+          <h3>Exercise 1.18</h3> <p>
+            To make all of these ideas concrete let's play with a small computer
+            system where each number is stored in the following format:
+            <math>\[ s \, E \, b_1 \, b_2 \, b_3 \]</math>
+          </p> <p>
+            The first entry is a bit for the sign (0<math>\(=+\)</math> and
+            <math>\(1=-\)</math>). The second entry, <math>\(E\)</math> is for
+            the exponent, and we'll assume in this example that the exponent
+            can be 0, 1, or <math>\(-1\)</math>. The three bits on the right
+            represent the significand of the number. Hence, every number in this
+            number system takes the form
+            <math>\[(-1)^s \times (1+ 0.b_1b_2b_3) \times 2^{E}\]</math>
+          </p> <ul>
+            <li>What is the smallest positive number that can be represented in this form?</li>
+            <li>What is the largest positive number that can be represented in this form?</li>
+            <li>What is the machine precision in this number system?</li>
+            <li>What would change if we allowed <math>\(E \in \{-2, -1, 0, 1, 2\}\)</math>?</li>
+          </ul>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.19">
+          <h3>Exercise 1.19</h3> <p>
+            What are the largest and smallest numbers that can be stored in single and double precision?
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.20">
+          <h3>Exercise 1.20</h3> <p>
+            What is machine precision for the single and double precision standard?
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.21">
+          <h3>Exercise 1.21</h3> <p>
+            Explain the behavior of the sequence from the first problem in these
+            notes using what you know about how computers store numbers in double
+            precision. <br/>
+            <math>
+              \[x_{n+1} = \left\{ \begin{array}{ll} 2x_n, &amp; x_n \in [0,\frac{1}{2}] \\ 2x_n - 1, &amp; x_n \in
+              (\frac{1}{2},1] \end{array} \right. \quad \text{with} \quad x_0 = \frac{1}{10}\]
+            </math><br/>
+            In particular, now that you know about how numbers are stored in a
+            computer, how long do you expect it to take until the truncation error
+            creeps into the computation?
+          </p>
+        </exercise>
+        <hr/>
+        <p>
+          Much more can be said about floating point numbers such as how we store
+          infinity, how we store NaN, and how we store 0. The
+          <a href="https://en.wikipedia.org/wiki/Floating-point_arithmetic">
+            Wikipedia page for floating point arithmetic
+          </a> might be of interest for the curious reader.
+          It is beyond the scope of this class and this book to go into
+          all of those details here. Instead, the biggest takeaway points
+          from this section and the previous are:
+        </p> <ul>
+          <li>All numbers in a computer are stored with finite precision.</li>
+          <li>Nice numbers like 0.1 are sometimes not machine representable in binary.</li>
+          <li>Machine precision is the gap between 1 and the next largest number that can be stored.</li>
+          <li>
+            Computers cannot tell the difference between two numbers if the difference is
+            less than their machine precision.
+          </li>
+        </ul>
+      </section>
+
+      <section id="1.4">
+        <h2>1.4 - Approximating Functions</h2> <p>
+          Numerical analysis is all about doing mathematics on a computer in
+          accurate and predictable ways. Since a computer can only ever store
+          finite bits of information for any number, most of what we do in a
+          computer is naturally an approximation of the real mathematics.
+          In this section we will look at a very powerful way to approximate
+          mathematical functions.
+        </p> <p>
+          How does a computer <em>understand</em> a function like
+          <math>\(f(x) = e^x\)</math> or <math>\(f(x) = \sin(x)\)</math> or
+          <math>\(f(x) = \ln(x)\)</math>? What happens under the hood,
+          so to speak, when you ask a computer to do a computation with one
+          of these functions? A computer is darn good at arithmetic, but
+          working with transcendental functions like these, or really any
+          other sufficiently complicated functions for that matter, causes
+          all sorts of problems in a computer. Approximation of the
+          function is something that is always happening under the hood.
+        </p>
+        <hr/>
+        <exercise id="exr1.22">
+          <h3>Exercise 1.22</h3> <p>
+            In this problem we're going to make a bit of a wish list for
+            all of the things that a computer will do when approximating
+            a function. We're going to complete the following sentence:<br />
+            <em>If we are going to approximate <math>\(f(x)\)</math>
+              near the point <math>\(x=x_0\)</math> with a simpler function
+              <math>\(g(x)\)</math> then ...</em><br/>
+              (I'll get us started with the first two things that seem
+              natural to wish for. The rest of the wish list is
+              for you to complete.)
+          </p> <ul>
+            <li>
+              the functions <math>\(f(x)\)</math> and
+              <math>\(g(x)\)</math> should agree at
+              <math>\(x=x_0\)</math>. In other words,
+              <math>\(f(x_0) = g(x_0)\)</math>
+            </li> <li>
+              the function <math>\(g(x)\)</math> should only involve
+              addition, subtraction, multiplication, division, and
+              integer exponents since computers are very good at
+              those sorts of operations.
+            </li> <li>
+              if <math>\(f(x)\)</math> is increasing / decreasing to
+              the right of <math>\(x=x_0\)</math> then <math>\(g(x)\)</math>...
+            </li> <li>
+              if <math>\(f(x)\)</math> is increasing / decreasing to the
+              left of <math>\(x=x_0\)</math> then <math>\(g(x)\)</math>...
+            </li> <li>
+              if <math>\(f(x)\)</math> is concave up / down to the right
+              of <math>\(x=x_0\)</math> then <math>\(g(x)\)</math>...
+            </li> <li>
+              if <math>\(f(x)\)</math> is concave up / down to the left
+              of <math>\(x=x_0\)</math> then <math>\(g(x)\)</math>...
+            </li> <li>
+              if we zoom into plots of the functions <math>\(f(x)\)</math>
+              and <math>\(g(x)\)</math> near <math>\(x=x_0\)</math> then...
+            </li> <li>...is there anything else that you would add?</li>
+          </ul>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.23">
+          <h3>Exercise 1.23</h3> <p>
+            Discuss: Could a polynomial function with a high enough degree
+            satisfy everything in the wish list from the previous problem?
+            Explain your reasoning.
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="1.24">
+          <h3>Exercise 1.24</h3> <p>
+            Let's put some parts of the wish list into action.
+            If <math>\(f(x)\)</math> is a differentiable function
+            at <math>\(x=x_0\)</math> and if
+            <math>\(g(x) = A + B (x-x_0) + C (x-x_0)^2 + D (x-x_0)^3\)</math>
+            then
+          </p> <ol>
+            <li>
+              What is the value of <math>\(A\)</math> such that
+              <math>\(f(x_0) = g(x_0)\)</math>?
+              <em>(Hint: substitute <math>\(x=x_0\)</math> into the
+              <math>\(g(x)\)</math> function)</em>
+            </li> <li>
+              What is the value of <math>\(B\)</math> such that
+              <math>\(f&#39;(x_0) = g&#39;(x_0)\)</math>?
+              <em>(Hint: Start by taking the derivative of
+              <math>\(g(x)\)</math>)</em>
+            </li> <li>
+              What is the value of <math>\(C\)</math> such that
+              <math>\(f&#39;&#39;(x_0) = g&#39;&#39;(x_0)\)</math>?
+            </li> <li>
+              What is the value of <math>\(D\)</math> such that
+              <math>\(f&#39;&#39;&#39;(x_0) = g&#39;&#39;&#39;(x_0)\)</math>?
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.25">
+          <h3>Exercise 1.25</h3> <p>
+            Let <math>\(f(x) = e^x\)</math>. Put the answers to the previous
+            question into action and build a cubic polynomial that approximates
+            <math>\(f(x) = e^x\)</math> near <math>\(x_0=0\)</math>.
+          </p>
+        </exercise>
+        <hr/>
+        <p>
+          In the previous 4 exercises you have built up some basic intuition
+          for what we would want out of a mathematical operation that might
+          build an approximation of a complicated function. What we've built
+          is actually a way to get better and better approximations for
+          functions out to pretty much any arbitrary accuracy that we like
+          so long as we are near some anchor point (which we called
+          <math>\(x_0\)</math> in the previous exercises).
+        </p> <p>
+          In the next several problems you'll unpack the approximations of
+          <math>\(f(x) = e^x\)</math> a bit more carefully and we'll wrap the
+          whole discussion with a little bit of formal mathematical language.
+          Then we'll examine other functions like sine, cosine, logarithms, etc.
+          One of the points of this whole discussion is to give you a little
+          glimpse as to what is happening behind the scenes in scientific
+          programming languages when you do computations with these functions.
+          A bigger point is to start getting a feel for how we might go in
+          reverse and approximate an unknown function out of much simpler parts.
+          This last goal is one of the big takeaways from numerical analysis:
+          <em>we can mathematically model highly complicated functions out of
+          fairly simple pieces.</em>
+        </p>
+        <hr/>
+        <exercise id="exr1.26">
+          <h3>Exercise 1.26</h3> <p>
+            What is Euler's number <math>\(e\)</math>? You likely remember
+            using this number often in Calculus and Differential Equations.
+            Do you know the decimal approximation for this number?
+            Moreover, is there a way that we could approximate something
+            like <math>\(\sqrt{e} = e^{0.5}\)</math> or <math>\(e^{-1}\)</math>
+            without actually having access to the full decimal expansion?
+          </p> <p>
+            For all of the questions below let's work with the function
+            <math>\(f(x) = e^x\)</math>.
+          </p> <ol>
+            <li>
+              The function <math>\(g(x) = 1\)</math> matches
+              <math>\(f(x) = e^x\)</math> exactly at the point <math>\(x=0\)</math>
+              since <math>\(f(0) = e^0 = 1\)</math>. Furthermore if
+              <math>\(x\)</math> is very very close to <math>\(0\)</math> then
+              the functions <math>\(f(x)\)</math> and <math>\(g(x)\)</math>
+              are really close to each other. So, we could say that
+              <math>\(g(x) = 1\)</math> is an approximation of the function
+              <math>\(f(x) = e^x\)</math> for values of <math>\(x\)</math> very
+              very close to <math>\(x=0\)</math>. Admittedly, though, it is probably
+              pretty clear that this is a horrible approximation for any
+              <math>\(x\)</math> just a little bit away from <math>\(x=0\)</math>.
+            </li> <li>
+              Let's get a better approximation. What if we insist that our
+              approximation <math>\(g(x)\)</math> matches <math>\(f(x) = e^x\)</math>
+              exactly at <math>\(x=0\)</math> and ALSO has exactly the same first
+              derivative as <math>\(f(x)\)</math> at <math>\(x=0\)</math>?
+              <ol>
+                <li>What is the first derivative of <math>\(f(x)\)</math>?</li>
+                <li>What is <math>\(f&#39;(0)\)</math>?</li>
+                <li>
+                  Use the point-slope form of a line to write the equation of
+                  the function <math>\(g(x)\)</math> that goes through the
+                  point <math>\((0,f(0))\)</math> and has slope
+                  <math>\(f&#39;(0)\)</math>. Recall from algebra that the
+                  point-slope form of a line is 
+                  <math>\(y = f(x_0) + m(x-x_0).\)</math> In this case we
+                  are taking <math>\(x_0 = 0\)</math> so we are using the
+                  formula <math>\(g(x) = f(0) + f&#39;(0) (x-0)\)</math> to
+                  get the equation of the line.
+                </li>
+              </ol>
+            </li> <li>
+              Write Python code to build a plot like Figure
+              <a href="#bookmark=fig-taylor-exp1">1.1</a>.
+              <figure id="fig-taylor-exp1">
+                <img src="images/Ch01Sec04_Taylor_exp1.png"
+                alt="The first few polynomial approximations of the exponential function." width="75%"/>
+                <caption>
+                  Figure 1.1: The first few polynomial approximations of
+                  the exponential function.
+                </caption>
+              </figure>
+              This plot shows <math>\(f(x) = e^x\)</math>, our first approximation
+              <math>\(g(x) = 1\)</math> and our second approximation,
+              <math>\(g(x) = 1+x\)</math>.
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.27">
+          <h3>Exercise 1.27</h3>
+          Let's extend the idea from the previous problem to much better
+          approximations of the function <math>\(f(x) = e^x\)</math>.
+          <ol>
+            <li>
+              Let's build a function <math>\(g(x)\)</math> that matches
+              <math>\(f(x)\)</math> exactly at <math>\(x=0\)</math>,
+              has exactly the same first derivative as <math>\(f(x)\)</math>
+              at <math>\(x=0\)</math>, AND has exactly the same second
+              derivative as <math>\(f(x)\)</math> at <math>\(x=0\)</math>.
+              To do this we'll use a quadratic function. For a quadratic
+              approximation of a function we just take a slight extension
+              to the point-slope form of a line and use the equation<br/>
+              <math>\[
+                y = f(x_0) + f&#39;
+                (x_0) (x-x_0) + \frac{f&#39;&#39;
+                (x_0)}{2} (x-x_0)^2.
+              \]</math><br/>
+              In this case we are using <math>\(x_0 = 0\)</math> so the
+              quadratic approximation function looks like
+              <math>\[
+                y = f(0) + f&#39;(0) x + \frac{f&#39;&#39;(0)}{2} x^2.
+              \]</math>
+              <ol>
+                <li>
+                  Find the quadratic approximation for
+                  <math>\(f(x) = e^x\)</math>.
+                </li> <li>
+                  How do you know that this function matches
+                  <math>\(f(x)\)</math> is all of the ways
+                  described above at <math>\(x=0\)</math>?
+                </li> <li>
+                  Add your new function to the plot you created in the
+                  previous problem.
+                </li>
+              </ol>
+            </li> <li>
+              Let's keep going! Next we'll do a cubic approximation.
+              A cubic approximation takes the form
+              <math>\[
+                y = f(x_0) + f&#39;(0) (x-x_0) +
+                \frac{f&#39;&#39;(0)}{2}(x-x_0)^2 +
+                \frac{f&#39;&#39;&#39;(0)}{3!}(x-x_0)^3
+              \]</math>
+              <ol style="list-style-type: lower-roman">
+                <li>
+                  Find the cubic approximation for <math>\(f(x) = e^x\)</math>.
+                </li> <li>
+                  How do we know that this function matches the first,
+                  second, and third derivatives of <math>\(f(x)\)</math>
+                  at <math>\(x=0\)</math>?
+                </li> <li>
+                  Add your function to the plot.
+                </li> <li>
+                  Pause and think: What's the deal with the
+                  <math>\(3!\)</math> on the cubic term?
+                </li>
+              </ol>
+            </li> <li>
+              Your turn: Build the next several approximations of
+              <math>\(f(x) = e^x\)</math> at <math>\(x=0\)</math>.
+              Add these plots to the plot that we've been building all along.
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.28">
+          <h3>Exercise 1.28</h3> <p>
+            We can get a decimal expansion of <math>\(e\)</math>
+            pretty easily:
+            <math>\[ e \approx 2.718281828459045 \]</math><br/>
+            In Python just type <code>np.exp(1)</code> which
+            will just evaluate <math>\(f(x) = e^x\)</math> at
+            <math>\(x=1\)</math> (and hence giving you a value for
+            <math>\(e^1 = e\)</math>). We built our approximations
+            in the previous problems centered at <math>\(x=0\)</math>,
+            and <math>\(x=1\)</math> is <em>not too terribly</em>
+            far from <math>\(x=0\)</math> so perhaps we can get a
+            good approximation with the functions that we've already
+            built. Complete the following table to see how we did with
+            our approximations.
+          </p>
+          <table>
+            <thead>
+              <tr class="header">
+                <th>Approximation Function</th>
+                <th>Value at <math>\(x=1\)</math></th>
+                <th>Absolute Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="odd">
+                <td>Constant</td>
+                <td>1</td>
+                <td><span>\(| 2.71828... - 1| \approx 1.71828...\)</span></td>
+              </tr> <tr class="even">
+                <td>Linear</td>
+                <td>1+1=2</td>
+                <td><span>\(|2.71828... - 2| \approx 0.71828...\)</span></td>
+              </tr> <tr class="odd">
+                <td>Quadratic</td>
+                <td></td>
+                <td></td>
+              </tr> <tr class="even">
+                <td>Cubic</td>
+                <td></td>
+                <td></td>
+              </tr> <tr class="odd">
+                <td>Quartic</td>
+                <td></td>
+                <td></td>
+              </tr> <tr class="even">
+                <td>Quintic</td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.29">
+          <h3>Exercise 1.29</h3> <p>
+            Use the functions that you've built to approximate
+            <math>\(\sqrt{e} = e^{0.5}\)</math>. Check the accuracy of your answer
+            using <code>np.exp(0.5)</code> in Python.
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.30">
+          <h3>Exercise 1.30</h3> <p>
+            Use the functions that you've built to approximate
+            <math>\(\frac{1}{e} = e^{-1}\)</math>. Check the accuracy of your
+            answer using <code>np.exp(-1)</code> in Python.
+          </p>
+        </exercise>
+        <hr/>
+        <definition id="def1.3">
+          <h3>Definition 1.3 - Taylor Series</h3> <p>
+            If <math>\(f(x)\)</math> is an infinitely differentiable
+            function at the point <math>\(x_0\)</math> then <br/>
+            <math>\[
+              f(x) = f(x_0) + f&#39;(x_0)(x-x_0) +
+              \frac{f&#39;&#39;(x_0)}{2}(x-x_0)^2 +
+              \cdots \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n +
+              \cdots
+            \]</math><br/>
+            for any reasonably small interval around <math>\(x_0\)</math>. The infinite polynomial expansion is called the <strong>Taylor Series</strong> of the function <math>\(f(x)\)</math>. Taylor Series are named for the mathematician <a href="https://en.wikipedia.org/wiki/Brook_Taylor">Brook Taylor</a>.
+          </p>
+        </definition>
+        <hr/>
+        <p>
+          The Taylor Series of a function is often written with summation
+          notation as<br/>
+          <math>\[
+            f(x) = \sum_{k=0}^\infty
+            \frac{f^{(k)}(x_0)}{k!} (x-x_0)^k.
+          \]</math><br/>
+          Don't let the notation scare you. In a Taylor Series you are
+          just saying: <em>give me a function that</em>
+        </p>
+        <ul>
+          <li>
+            <em>matches <math>\(f(x)\)</math> at <math>\(x=x_0\)</math>
+            exactly,</em>
+          </li> <li>
+            <em>matches <math>\(f&#39;(x)\)</math> at <math>\(x=x_0\)</math>
+            exactly,</em>
+          </li> <li>
+            <em>matches <math>\(f&#39;&#39;(x)\)</math> at <math>\(x=x_0\)</math>
+            exactly,</em>
+          </li> <li>
+            <em>matches <math>\(f&#39;&#39;&#39;(x)\)</math> at <math>\(x=x_0\)</math>
+            exactly,</em>
+          </li> <li>
+            <em>matches <math>\(f^{(4)}(x)\)</math> at <math>\(x=x_0\)</math>
+            exactly,</em>
+          </li> <li>
+            <em>matches <math>\(f^{(5)}(x)\)</math> at <math>\(x=x_0\)</math>
+            exactly,</em>
+          </li>
+        </ul>
+        <p>
+          (Take a moment and make sure that the summation notation makes
+          sense to you.)
+        </p> <p>
+          Moreover, Taylor Series are built out of the easiest types of
+          functions: polynomials. Computers are rather good at doing
+          computations with addition, subtraction, multiplication, division,
+          and integer exponents, so Taylor Series are a natural way to
+          express functions in a computer. The down side is that we can
+          only get true equality in the Taylor Series if we have infinitely
+          many terms in the series. A computer cannot do infinitely many
+          computations. So, in practice, we truncate Taylor Series after
+          many terms and think of the new polynomial function as being
+          <em>close enough</em> to the actual function so far as we don't
+          stray too far from the anchor <math>\(x_0\)</math>.
+        </p>
+        <hr />
+        <definition id="def1.4">
+          <h3>Definition 1.4 - Maclaurin Series</h3> <p>
+            A Taylor Series that is centered at <math>\(x_0 = 0\)</math>
+            is called a Maclaurin Series after the mathematician
+            <a href="https://en.wikipedia.org/wiki/Colin_Maclaurin">Colin Maclaurin</a>.
+            This is just a special case of a Taylor Series, so throughout this
+            book we will refer to both Taylor Series and Maclaurin Series simply
+            as Taylor Series.
+          </p>
+        </definition>
+        <hr/>
+        <exercise id="exr1.31">
+          <h3>Exercise 1.31</h3> <p>
+            Verify from your previous work that the Taylor Series centered
+            at <math>\(x_0 = 0\)</math> (i.e. the Maclaurin Series) for
+            <math>\(f(x) = e^x\)</math> is indeed
+            <math>\[
+              e^x = 1 + x + \frac{x^2}{2} + \frac{x^3}{3!} +
+              \frac{x^4}{4!} + \frac{x^5}{5!} + \cdots.
+            \]</math>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.32">
+          <h3>Exercise 1.32</h3> <p>
+            Do all of the calculations to show that the Taylor Series
+            centered at <math>\(x_0 = 0\)</math> for the function
+            <math>\(f(x) = \sin(x)\)</math> is indeed <br/>
+            <math>\[
+              \sin(x) = x - \frac{x^3}{3!} + \frac{x^5}{5!} -
+              \frac{x^7}{7!} + \cdots
+            \]</math>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.33">
+          <h3>Exercise 1.33</h3> <p>
+            Do all of the calculations to show that the Taylor Series
+            centered at <math>\(x_0 = 0\)</math> for the function
+            <math>\(f(x) = \cos(x)\)</math> is indeed <br/>
+            <math block>\[
+              \cos(x) = 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \frac{x^6}{6!} + \cdots
+            \]</math>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.34">
+          <h3>Exercise 1.34</h3> <p>
+            Let's compute a few Taylor Series that are not centered at
+            <math>\(x_0 = 0\)</math> (that is, Taylor Series that are not
+            Maclaurin Series). For example, let's approximate the function
+            <math>\(f(x) = \sin(x)\)</math> near
+            <math>\(x_0 = \frac{\pi}{2}\)</math>. Near the point
+            <math>\(x_0 = \frac{\pi}{2}\)</math>, the Taylor Series
+            approximation will take the form <br/>
+            <math>\[
+              f(x) = f\left( \frac{\pi}{2} \right) +
+              f&#39;\left( \frac{\pi}{2} \right)
+              \left( x - \frac{\pi}{2} \right) +
+              \frac{f&#39;&#39;\left( \frac{\pi}{2} \right)}{2!}
+              \left( x - \frac{\pi}{2} \right)^2 +
+              \frac{f&#39;&#39;&#39;\left( \frac{\pi}{2} \right)}{3!}
+              \left( x - \frac{\pi}{2} \right)^3 + \cdots
+            \]</math>
+          </p> <p>
+            Write the first several terms of the Taylor Series for
+            <math>\(f(x) = \sin(x)\)</math> centered at
+            <math>\(x_0 = \frac{\pi}{2}\)</math>.
+            Then write Python code to build the plot below showing
+            successive approximations for <math>\(f(x) = \sin(x)\)</math>
+            centered at <math>\(\pi/2\)</math>.
+          </p>
+        </exercise>
+        <hr/>
+        <figure id="fig-taylor-sine-pi2">
+          <img src="images/Ch01Sec04_Taylor_Sine_pi2.png"
+          alt="Taylor Series approximations of the sine function." width="75%"/>
+          <caption>Figure 1.2: Taylor Series approximations of the sine function.</caption>
+        </figure>
+        <hr/>
+        <exercise id="exr1.35">
+          <h3>Exercise 1.35</h3> <p>
+            Repeat the previous exercise for the functions<br/>
+            <math>\[\begin{eqnarray}
+              f(x) &amp;= \cos(x) \text{ centered at } x_0 = \pi \\
+              f(x) &amp;= \ln(x) \text{ centered at } x_0 = 1
+            \end{eqnarray}\]</math>
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.36">
+          <h3>Exercise 1.36</h3> <p>
+            Approximate <math>\(\cos(3)\)</math> using a Taylor Series.
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.37">
+          <h3>Exercise 1.37</h3> <p>
+            Approximate <math>\(\ln(1.1)\)</math> using a Taylor Series.
+          </p>
+        </exercise>
+        <hr/>
+        <example id="exm1.4">
+          Let's conclude this brief section by examining an interesting
+          example. Consider the function <br/>
+          <math block>\[ f(x) = \frac{1}{1-x}. \]</math><br/>
+          If we build a Taylor Series centered at <math>\(x_0 = 0\)</math>
+          (i.e. the Maclaurin Series) it isn't too hard to show that we get
+          <math>\[ f(x) = 1 + x + x^2 + x^3 + x^4 + x^5 + \cdots \]</math>
+          (you should stop now and verify this!). However, if we plot the
+          function <math>\(f(x)\)</math> along with several successive
+          approximations for <math>\(f(x)\)</math> we find that beyond
+          <math>\(x=1\)</math> we don't get the correct behavior of the
+          function (see Figure <a href="#bookmark=taylor-3">1.3</a>).
+          More specifically, we cannot get the Taylor Series to change
+          behavior across the vertical asymptote of the function at
+          <math>\(x=1\)</math>. This example is meant to point out the
+          fact that a Taylor Series will only ever make sense <em>near</em>
+          the point at which you center the expansion. For the function
+          <math>\(f(x) = \frac{1}{1-x}\)</math> centered at
+          <math>\(x_0 = 0\)</math> we can only get good approximations
+          within the interval <math>\(x \in (-1,1)\)</math> and no further.
+        </example>
+        <hr/>
+        <figure id="fig-taylor-3">
+          <img src="images/Ch01Sec04_Taylor3.png" alt="Several Taylor Series approximations of the function $f(x) = 1/(1-x)$." width="75%" />
+          <caption>
+            Figure 1.3: Several Taylor Series approximations of the function
+            <math>\(f(x) = 1/(1-x)\)</math>.
+          </caption>
+        </figure>
+        <hr/>
+        <!-- god I'm so tired -->
+        <p>
+          In the previous example we saw that we cannot always get
+          approximations from Taylor Series that are good everywhere.
+          For every Taylor Series there is a
+          <strong>domain of convergence</strong> where the Taylor Series
+          actually makes sense and gives good approximations. While it is
+          beyond the scope of this section to give all of the details for
+          finding the domain of convergence for a Taylor Series, a good
+          heuristic is to observe that a Taylor Series will only give
+          reasonable approximations of a function from the center of
+          the series to the nearest asymptote. The domain of convergence
+          is typically symmetric about the center as well. For example:
+        </p>
+        <ul>
+          <li>
+            If we were to build a Taylor Series approximation for the
+            function <math>\(f(x) = \ln(x)\)</math> centered at the point
+            <math>\(x_0 = 1\)</math> then the domain of convergence should
+            be <math>\(x \in (0,2)\)</math> since there is a vertical
+            asymptote for the natural logarithm function at <math>\(x=0\)</math>.
+          </li> <li>
+            If we were to build a Taylor Series approximation for the function
+            <math>\(f(x) = \frac{5}{2x-3}\)</math> centered at the point
+            <math>\(x_0 = 4\)</math> then the domain of convergence should be
+            <math>\(x \in (1.5, 6.5)\)</math> since there is a vertical asymptote
+            at <math>\(x=1.5\)</math> and the distance from <math>\(x_0 = 4\)</math>
+            to <math>\(x=1.5\)</math> is 2.5 units.<br />
+          </li> <li>
+            If we were to build a Taylor Series approximation for the function
+            <math>\(f(x) = \frac{1}{1+x^2}\)</math> centered at the point
+            <math>\(x_0 = 0\)</math> then the domain of convergence should be
+            <math>\(x \in (-1,1)\)</math>. This may seem quite odd (and perhaps
+            quite surprising!) but let's think about where the nearest asymptote
+            might be. To find the asymptote we need to solve
+            <math>\(1+x^2 = 0\)</math> but this gives us the values
+            <math>\(x = \pm i\)</math>. In the complex plane, the numbers
+            <math>\(i\)</math> and <math>\(-i\)</math> are 1 unit away from
+            <math>\(x_0 = 0\)</math>, so the "asymptote" isn't visible in a
+            real-valued plot but it is still only one unit away. Hence the
+            domain of convergence is <math>\(x \in (-1,1)\)</math>. You should
+            pause now and build some plots to show yourself that this indeed
+            appears to be true.
+          </li>
+        </ul>
+        <p>
+          A Taylor Series will give good approximations to the function
+          within the domain of convergence, but will give garbage outside of it.
+          For more details about the domain of convergence of a Taylor Series
+          you can refer to the
+          <a href="https://activecalculus.org/single/sec-8-5-taylor.html">
+            Taylor Series section of the online Active Calculus Textbook
+          </a> <cite>
+            <a href="#ref-active-calculus" role="doc-biblioref">[2]</a>
+          </cite>.
+        </p>
+      </section>
+      <hr style="page-break-after: always;"/>
+      <section id="1.5">
+        <h2>1.5 - Approximation Error with Taylor Series</h2> <p>
+          The great thing about Taylor Series is that they allow for the
+          representation of potentially very complicated functions as polynomials -
+          and polynomials are easily dealt with on a computer since they involve
+          only addition, subtraction, multiplication, division, and integer
+          powers. The down side is that the order of the polynomial is infinite.
+          So every time we use a Taylor series on a computer we are actually
+          going to be using a <strong>Truncated Taylor Series</strong> where we
+          only take a finite number of terms. The idea here is simple in principle:
+        </p>
+        <ul>
+          <li>
+            If a function <math>\(f(x)\)</math> has a Taylor Series
+            representation it can be written as an infinite sum.
+          </li> <li>
+            Computers can't do infinite sums.
+          </li> <li>
+            So stop the sum at some point <math>\(n\)</math> and throw away
+            the rest of the infinite sum.</li>
+          <li>
+            Now <math>\(f(x)\)</math> is approximated by some finite sum so long
+            as you stay pretty close to <math>\(x = x_0\)</math>,
+          </li> <li>
+            and everything that we just chopped off of the end is called the
+            <strong>remainder</strong> for the finite sum.
+          </li>
+        </ul>
+        <p>
+          Let's be a bit more concrete about it. The Taylor Series for
+          <math>\(f(x) = e^x\)</math> centered at <math>\(x_0 = 0\)</math>
+          is <math block>\[
+            e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} +
+            \frac{x^4}{4!} + \cdots.
+          \]</math>
+        </p>
+        <dl>
+          <dt>
+            <math>\(0^{th}\)</math> Order Approximation of
+            <math>\(f(x) = e^x\)</math>:
+          </dt> <dd>
+            If we want to use a zeroth-order (constant) approximation of
+            <math>\(f(x) = e^x\)</math> then we only take the first term in the
+            Taylor Series and the rest is not used for the approximation
+            <math block>\[
+              e^x = \underbrace{1}_{\text{$0^{th}$ order approximation}} +
+              \underbrace{x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} +
+              \cdots}_{\text{remainder}}.
+            \]</math>
+            Therefore we would approximate <math>\(e^x\)</math> as
+            <math>\(e^x \approx 1\)</math> for values of <math>\(x\)</math>
+            that are close to <math>\(x_0 = 0\)</math>. Furthermore, for small
+            values of <math>\(x\)</math> that are close to <math>\(x_0 = 0\)</math>
+            the largest term in the remainder is <math>\(x\)</math> (since for
+            small values of <math>\(x\)</math> like 0.01, <math>\(x^2\)</math>
+            will be even smaller, <math>\(x^3\)</math> even smaller than that, etc).
+            This means that if we use a <math>\(0^{th}\)</math> order approximation
+            for <math>\(e^x\)</math> then we expect our error to be about the same
+            size as <math>\(x\)</math>. It is common to then rewrite the truncated
+            Taylor Series as
+            <math block>\[
+              \text{$0^{th}$ order approximation: }
+              e^x \approx 1 + \mathcal{O}(x)
+            \]</math> where <math>\(\mathcal{O}(x)\)</math>
+            (read “Big-O of <math>\(x\)</math>”) tells us that the expected error
+            for approximations close to <math>\(x_0 = 0\)</math> is about the same
+            size as <math>\(x\)</math>.
+          </dd>
+          <dt>
+            <math>\(1^{st}\)</math> Order Approximation of
+            <math>\(f(x) = e^x\)</math>:
+          </dt> <dd>
+            If we want to use a first-order (linear) approximation of
+            <math>\(f(x) = e^x\)</math> then we gather the <math>\(0^{th}\)</math>
+            order and <math>\(1^{st}\)</math> order terms together as our
+            approximation and the rest is the remainder
+            <math block>\[
+              e^x = \underbrace{1 + x}_{\text{$1^{st}$ order approximation}} +
+              \underbrace{\frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} +
+              \cdots}_{\text{remainder}}.
+            \]</math>
+            Therefore we would approximate <math>\(e^x\)</math> as
+            <math>\(e^x \approx 1+x\)</math> for values of <math>\(x\)</math>
+            that are close to <math>\(x_0 = 0\)</math>. Furthermore, for values
+            of <math>\(x\)</math> very close to <math>\(x_0 = 0\)</math> the
+            largest term in the remainder is the <math>\(x^2\)</math> term.
+            Using Big-O notation we can write the approximation as
+            <math block>\[
+              \text{$1^{st}$ order approximation: }
+              e^x \approx 1 + x + \mathcal{O}(x^2).
+            \]</math>
+            Notice that we don't explicitly say what the coefficient is for
+            the <math>\(x^2\)</math> term. Instead we are just saying that
+            <em>using the linear function <math>\(y=1+x\)</math> to
+              approximate <math>\(e^x\)</math> for values of
+              <math>\(x\)</math> near <math>\(x_0=0\)</math> will result
+              in errors that are proportional to <math>\(x^2\)</math>.</em>
+          </dd>
+          <dt>
+            <math>\(2^{nd}\)</math> Order Approximation of
+            <math>\(f(x) = e^x\)</math>:
+          </dt> <dd>
+            If we want to use a second-order (quadratic) approximation of
+            <math>\(f(x) = e^x\)</math> then we gather the
+            <math>\(0^{th}\)</math> order, <math>\(1^{st}\)</math> order,
+            and <math>\(2^{nd}\)</math> order terms together as our
+            approximation and the rest is the remainder
+            <math block>\[
+              e^x = \underbrace{1 + x +
+              \frac{x^2}{2!}}_{\text{$2^{nd}$ order approximation}} +
+              \underbrace{\frac{x^3}{3!} + \frac{x^4}{4!} +
+              \cdots}_{\text{remainder}}.
+            \]</math>
+            Therefore we would approximate <math>\(e^x\)</math> as
+            <math>\(e^x \approx 1+x+\frac{x^2}{2}\)</math> for values of
+            <math>\(x\)</math> that are close to <math>\(x_0 = 0\)</math>.
+            Furthermore, for values of <math>\(x\)</math> very close to
+            <math>\(x_0 = 0\)</math> the largest term in the remainder is the
+            <math>\(x^3\)</math> term. Using Big-O notation we can write the
+            approximation as
+            <math block>\[
+              \text{$2^{nd}$ order approximation: }
+              e^x \approx 1 + x + \frac{x^2}{2} + \mathcal{O}(x^3).
+            \]</math>
+            Again notice that we don't explicitly say what the coefficient is
+            for the <math>\(x^3\)</math> term. Instead we are just saying that
+            <em>using the quadratic function <math>\(y=1+x+\frac{x^2}{2}\)</math>
+            to approximate <math>\(e^x\)</math> for values of <math>\(x\)</math>
+            near <math>\(x_0=0\)</math> will result in errors that are proportional
+            to <math>\(x^3\)</math>.</em>
+          </dd>
+        </dl>
+        <p>
+          For the function <math>\(f(x) = e^x\)</math> the idea of
+          approximating the amount of approximation error by truncating
+          the Taylor Series is relatively straight forward: if we want an
+          <math>\(n^{th}\)</math> order polynomial approximation of
+          <math>\(e^x\)</math> near <math>\(x_0 = 0\)</math> then
+          <math block>\[
+            e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} +
+            \cdots + \frac{x^n}{n!} + \mathcal{O}(x^{n+1})
+          \]</math>
+          meaning that we expect the error to be proportional to
+          <math>\(x^{n+1}\)</math>.
+          <br/>
+          Keep in mind that this sort of analysis is only good for values of
+          <math>\(x\)</math> that are very close to the center of the Taylor
+          Series. If you are making approximations that are too far away then
+          all bets are off.
+        </p>
+        <hr/>
+        <exercise id="exr1.38">
+          <h3>Exercise 1.38</h3> <p>
+            Let's make the previous discussion a bit more concrete.
+            We know the Taylor Series for <math>\(f(x) = e^x\)</math> quite
+            well at this point so let's use it to approximate the value of
+            <math>\(f(0.1) = e^{0.1}\)</math> with different order
+            polynomials. Notice that <math>\(x=0.1\)</math> is pretty close
+            to the center of the Taylor Series <math>\(x_0 = 0\)</math>
+            so this sort of approximation is reasonable.
+            <br/>
+            Using <code>np.exp(0.1)</code> we have Python's approximation
+            <math>\(e^{0.1} \approx\)</math> <code>np.exp(0.1)</code>
+            <math>\(=1.1051709181\)</math>.
+            <br/>
+            Fill in the blanks in the table.
+          </p>
+          <table>
+            <colgroup>
+              <col width="26%" />
+              <col width="26%" />
+              <col width="26%" />
+              <col width="21%" />
+            </colgroup>
+            <thead>
+              <tr class="header">
+                <th>Taylor Series</th>
+                <th>Approximation</th>
+                <th>Absolute Error</th>
+                <th>Expected Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="odd">
+                <td><math>\(0^{th}\)</math> Order</td>
+                <td><math>\(1\)</math></td>
+                <td><math>\(|e^{0.1}-1| = 0.1051709181\)</math></td>
+                <td><math>\(\mathcal{O}(x) = 0.1\)</math></td>
+              </tr> <tr class="even">
+                <td><math>\(1^{st}\)</math> Order</td>
+                <td><math>\(1.1\)</math></td>
+                <td><math>\(|e^{0.1}-1.1| = 0.0051709181\)</math></td>
+                <td><math>\(\mathcal{O}(x^2) = 0.1^2 = 0.01\)</math></td>
+              </tr> <tr class="odd">
+                <td><math>\(2^{nd}\)</math> Order</td>
+                <td><math>\(1.105\)</math></td>
+                <td></td>
+                <td></td>
+              </tr> <tr class="even">
+                <td><math>\(3^{rd}\)</math> Order</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr> <tr class="odd">
+                <td><math>\(4^{th}\)</math> Order</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr> <tr class="even">
+                <td><math>\(5^{th}\)</math> Order</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </exercise>
+        <hr/>
+        <p>
+          Observe in the previous exercise that the actual absolute error is
+          always less than the expected error. Using the first term in the
+          remainder to estimate the approximation error of truncating a
+          Taylor Series is crude but very easy to implement.
+        </p>
+        <hr/>
+        <theorem id="theorem1.1">
+          <h3>Theorem 1.1</h3> <p>
+            The approximation error when using a truncated Taylor Series is
+            roughly proportional to the size of the next term
+            in the Taylor Series.
+          </p>
+        </theorem>
+        <hr/>
+        <exercise id="exr1.39">
+          <h3>Exercise 1.39</h3> <p>
+            Next we will examine the approximation error for the sine function
+            near <math>\(x_0 = 0\)</math>. We know that the sine function has
+            the Taylor Series centered at <math>\(x_0 = 0\)</math> as
+            <math block>\[
+              \sin(x) = x - \frac{x^3}{3!} + \frac{x^5}{5!} -
+              \frac{x^7}{7!} + \cdots.
+            \]</math>
+          </p> <ol>
+            <li>
+              A linear approximation of <math>\(\sin(x)\)</math> near
+              <math>\(x_0 = 0\)</math> is
+              <math>\(\sin(x) = x + \mathcal{O}(x^3)\)</math>.
+              <ol style="list-style-type: lower-roman">
+              <li>Use the linear approximation formula to approximate <span>\(\sin(0.2)\)</span>.</li>
+              <li>What does “<span>\(\mathcal{O}(x^3)\)</span>” mean about the approximation of <span>\(\sin(0.2)\)</span>?<br />
+              (Take note that we ignore the minus sign on the approximation error since we are really only interested in absolute error (i.e. we don't care if we overshoot or undershoot).)</li>
+              </ol>
+            </li> <li>
+              Notice that there are no quadratic terms in the Taylor Series
+              so there is no quadratic approximation for
+              <math>\(\sin(x)\)</math> near <math>\(x_0 =0\)</math>.
+            </li> <li>
+              A cubic approximation of <math>\(\sin(x)\)</math> near
+              <math>\(x_0 = 0\)</math> is
+              <math>\(\sin(x) = ?? - ?? + \mathcal{O}(??)\)</math>.
+              <ol style="list-style-type: lower-roman">
+                <li>
+                  Fill in the question marks in the cubic
+                  approximation formula.
+                </li> <li>
+                  Use the cubic approximation formula to approximate
+                  <math>\(\sin(0.2)\)</math>.
+                </li> <li>
+                  What is the approximation error for your approximation?
+                </li>
+              </ol>
+            </li> <li>
+              What is the next approximation formula for
+              <math>\(\sin(x)\)</math> near <math>\(x_0 = 0\)</math>?
+              Use it to approximate <math>\(\sin(0.2)\)</math>, and give
+              the expected approximation error.
+            </li> <li>
+              Now let's check all of our answers against what Python
+              says we should get for <math>\(\sin(0.2)\)</math>.
+              If you use <code>np.sin(0.2)</code> you should get
+              <math>\(\sin(0.2) \approx\)</math> <code>np.sin(0.2)</code>
+              <math>\(=0.1986693308\)</math>.
+              Fill in the blanks in the table below and then discuss
+              the quality of our error approximations.
+            </li>
+          </ol>
+          <table>
+            <thead>
+              <tr class="header">
+                <th>Taylor Series</th>
+                <th>Estimated Error</th>
+                <th>Actual Absolute Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="odd">
+              <td><math>\(1^{st}\)</math> Order</td>
+              <td><math>\(\mathcal{O}(x^3) = 0.2^3 = 0.008\)</math></td>
+              <td><math>\(0.001330669205\)</math></td>
+            </tr>
+            <tr class="even">
+              <td><math>\(3^{rd}\)</math> Order</td>
+              <td></td> <td></td>
+            </tr>
+            <tr class="odd">
+              <td><math>\(5^{th}\)</math> Order</td>
+              <td></td> <td></td>
+            </tr>
+            <tr class="even">
+              <td><math>\(7^{th}\)</math> Order</td>
+              <td></td> <td></td>
+            </tr>
+            <tr class="odd">
+              <td><math>\(9^{th}\)</math> Order</td>
+              <td></td> <td></td>
+            </tr>
+            </tbody>
+          </table>
+          <ol start="6">
+            <li>
+              What observations do you make about the estimate of
+              the approximation error and the actual approximation error?
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.40">
+          <h3>Exercise 1.40</h3> <p>
+            What if we want an approximation of <math>\(\ln(1.1)\)</math>
+            and we want that approximation to be within 5 decimal places.
+            The number 1.1 is very close to 1 and we know that
+            <math>\(\ln(1) = 0\)</math>. It seems like a good idea to build
+            a Taylor Series approximation for <math>\(\ln(x)\)</math>
+            centered at <math>\(x_0 = 1\)</math> to solve this problem.
+          </p>
+          <ol> <!-- Wait, why is this a list? -->
+            <li>
+              Complete the table of derivatives below to get the
+              Taylor coefficients for the Taylor Series of
+              <math>\(\ln(x)\)</math> centered at <math>\(x_0 = 1\)</math>.
+            </li>
+          </ol>
+          <table>
+            <thead>
+              <tr class="header">
+                <th>Order of Derivative</th>
+                <th>Derivative</th>
+                <th>Value at <span>\(x_0 = 1\)</span></th>
+                <th>Taylor Coefficient</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="odd">
+                <td>0</td>
+                <td><span>\(\ln(x)\)</span></td>
+                <td>0</td> <td>0</td>
+              </tr> <tr class="even">
+                <td>1</td>
+                <td><span>\(\frac{1}{x} = x^{-1}\)</span></td>
+                <td>1</td> <td>1</td>
+              </tr> <tr class="odd">
+                <td>2</td>
+                <td><span>\(-x^{-2}\)</span></td>
+                <td><span>\(-1\)</span></td>
+                <td><span>\(\frac{-1}{2!} = -\frac{1}{2}\)</span></td>
+              </tr> <tr class="even">
+                <td>3</td>
+                <td><span>\(2x^{-3}\)</span></td>
+                <td>2</td>
+                <td><span>\(\frac{2}{3!} = \frac{1}{3}\)</span></td>
+              </tr> <tr class="odd">
+                <td>4</td>
+                <td><span>\(-6x^{-4}\)</span></td>
+                <td><span>\(-6\)</span></td> <td></td>
+              </tr> <tr class="even">
+                <td>5</td> <td></td> <td></td> <td></td>
+              </tr> <tr class="odd">
+                <td>6</td> <td></td> <td></td> <td></td>
+              </tr> <tr class="even">
+                <td><span>\(\vdots\)</span></td>
+                <td><span>\(\vdots\)</span></td>
+                <td><span>\(\vdots\)</span></td>
+                <td><span>\(\vdots\)</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <ol start="2">
+            <li>
+              Based on what you did in part (a), complete the Taylor Series
+              for <math>\(\ln(x)\)</math> centered at <math>\(x_0 = 1\)</math>.
+              <math block>\[
+                \ln(x) = 0 + 1(x-1) - \frac{1}{2}(x-1)^2 + \frac{1}{3}(x-1)^3 -
+                \frac{??}{??}(x-1)^4 + \frac{??}{??}(x-1)^5 + \cdots.
+              \]</math>
+            </li> <li>
+              The <math>\(n^{th}\)</math> order Taylor approximation of
+              <math>\(\ln(x)\)</math> near <math>\(x_0 = 1\)</math> is given
+              below. What is the order of the estimated approximation error?
+              <math block>\[
+                \ln(x) = (x-1) - \frac{(x-1)^2}{2} + \frac{(x-1)^3}{3} - \cdots +
+                \frac{(-1)^{n-1} (x-1)^n}{n} + \mathcal{O}(???)
+              \]</math>
+            </li> <li>
+              Finally we want to get an approximation for <math>\(\ln(1.1)\)</math>
+              accurate to 5 decimal places (or better). What is the minimum number
+              of terms we expect to need from the Taylor Series?
+              Support your answer mathematically.
+            </li> <li>
+              Use Python's <code>np.log(1.1)</code> to get an approximation for
+              <math>\(\ln(1.1)\)</math> and then numerically verify your answer
+              to part (d).
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+        <exercise id="exr1.41">
+          <h3>Exercise 1.41</h3> <p>
+            In the previous problem you found an approximation for
+            <math>\(\ln(1.1)\)</math> to 5 decimal places. In doing so you
+            had to build a Taylor Series at a well-known point nearby 1.1
+            and then use our approximation of the error to determine the
+            number of terms to keep in the approximation. In this exercise
+            we want an approximation of
+            <math>\(\cos\left( \frac{\pi}{2} + 0.05 \right)\)</math>.
+            To do so you should build a Taylor Series for the cosine
+            function centered at an appropriate point, determine an
+            estimate for the approximation error, and then use that
+            estimate to determine the number of terms to keep in the
+            approximation.
+          </p>
+        </exercise>
+      </section>
+      <hr style="page-break-after:always;"/>
+      <section id="1.6">
+        <h2>1.6 - Exercises</h2>
+
+        <section id="1.6.1">
+          <h3>1.6.1 - Coding Exercises</h3> <p>
+            The first several exercises here are meant for you to practice and
+            improve your coding skills. If you are stuck on any of the coding
+            then I recommend that you have a look at
+            <a href="#chapter=python">Appendix A</a>. Please refrain from
+            Googling anything on these problems or using any form of AI.
+            The point is to struggle through the code, get it wrong many times,
+            debug, and learn all the seemingly-little ways it goes wrong.
+          </p>
+          <hr/>
+          <exercise id="exr1.42">
+            <h3>Exercise 1.42</h3> <p>
+              (This problem is modified from <cite>
+                <a href="#ref-euler" role="doc-biblioref">[3]</a>
+              </cite>)<br />
+              If we list all of the numbers below 10 that are multiples of 3 or 5 we
+              get 3, 5, 6, and 9. The sum of these multiples is 23. Write code to find
+              the sum of all the multiples of 3 or 5 below 1000. Your code needs to
+              run error free and output only the sum.
+            </p>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.43">
+            <h3>Exercise 1.43</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-euler" role="doc-biblioref">[3]</a></cite>)<br />
+              Each new term in the Fibonacci sequence is generated by adding the
+              previous two terms. By starting with 1 and 2, the first 10 terms will
+              be: <math>\[1, 1, 2, 3, 5, 8, 13, 21, 34, 55, \dots\]</math>
+              By considering the terms in the Fibonacci sequence whose values do not
+              exceed four million, write code to find the sum of the even-valued terms.
+              Your code needs to run error free and output only the sum.
+            </p>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.44">
+            <h3>Exercise 1.44</h3> <p>
+              Write computer code that will draw random numbers from the unit interval
+              <math>\([0,1]\)</math>, distributed uniformly (using Python's
+              <code>np.random.rand()</code>), until the sum of the numbers that you
+              draw is greater than 1. Keep track of how many numbers you draw. Then
+              write a loop that does this process many many times. On average, how
+              many numbers do you have to draw until your sum is larger than 1?
+            </p> <dl>
+              <dt>Hint #1:</dt>
+              <dd>
+                Use the <code>np.random.rand()</code> function to
+                draw a single number from a uniform distribution
+                with bounds <math>\((0,1)\)</math>.
+              </dd>
+              <dt>Hint #2:</dt>
+              <dd>
+                You should do this more than 1,000,000 times to get a good
+                average, and the number that you get should be familiar!
+              </dd>
+            </dl>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.45">
+            <h3>Exercise 1.45</h3> <p>
+              My favorite prime number is 8675309. Yep. Jenny's phone number is prime!
+              Write a script that verifies this fact.
+            </p> <dl><dt>Hint:</dt><dd>
+              You only need to check divisors as large as the square root of 8675309.
+            </dd></dl>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.46">
+            <h3>Exercise 1.46</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-euler" role="doc-biblioref">[3]</a></cite>)<br/>
+              Write a function called that accepts an integer and returns a binary variable:
+            </p> <ul>
+              <li>0 = not prime,</li>
+              <li>1 = prime.</li>
+            </ul> <p>
+              Next write a script to find the sum of all of the prime
+              numbers less than 1000.
+            </p> <dl>
+              <dt>Hint:</dt> <dd>
+                Remember that a prime number has exactly two divisors: 1 and itself.
+                You only need to check divisors as large as the square root of
+                <math>\(n\)</math>. Your script should probably be smart enough to
+                avoid all of the non-prime even numbers.
+              </dd>
+            </dl>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.47">
+            <h3>Exercise 1.47</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-euler" role="doc-biblioref">[3]</a></cite>)<br/>
+              The sum of the squares of the first ten natural numbers is,
+              <math block>\[1^2 + 2^2 + \dots + 10^2 = 385\]</math>
+              The square of the sum of the first ten natural numbers is,
+              <math block>\[(1 + 2 + \dots + 10)^2 = 55^2 = 3025\]</math> Hence
+              the difference between the square of the sum of the first ten natural
+              numbers and the sum of the squares is <math>\(3025 - 385 = 2640\)</math>.
+              <br/>
+              Write code to find the difference between the square of the sum of the
+              first one hundred natural numbers and the sum of the squares. Your code
+              needs to run error free and output only the difference.
+            </p>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.48">
+            <h3>Exercise 1.48</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-euler" role="doc-biblioref">[3]</a></cite>)<br/>
+              The prime factors of <math>\(13195\)</math> are <math>\(5, 7, 13\)</math>
+              and <span>\(29\)</span>. Write code to find
+              the largest prime factor of the number <span>\(600851475143\)</span>.
+              Your code needs to run error-free and output only the largest prime factor.
+            </p>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.49">
+            <h3>Exercise 1.49</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-euler" role="doc-biblioref">[3]</a></cite>)<br/>
+              The number 2520 is the smallest number that can be divided by each of
+              the numbers from 1 to 10 without any remainder. Write code to find the
+              smallest positive number that is evenly divisible by all of the numbers
+              from 1 to 20.
+              <br/>
+              <strong>Hint:</strong> You will likely want to use
+              <a href="https://python-reference.readthedocs.io/en/latest/docs/operators/modulus.html">
+                modular division
+              </a> for this problem.
+            </p>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.50">
+            <h3>Exercise 1.50</h3> <p>
+              The following iterative sequence is defined for the set of positive integers:
+              <math block>\[\begin{aligned}
+                  &amp; n \to \frac{n}{2} \quad \text{(n is even)} \\
+                  &amp; n \to 3n + 1 \quad \text{(n is odd)}
+              \end{aligned}\]</math>
+              Using the rule above and starting with <math>\(13\)</math>, we
+              generate the following sequence:
+              <math block>
+                \[13 \to  40 \to 20 \to 10 \to 5 \to 16 \to 8 \to 4 \to 2 \to 1\]
+              </math>
+              It can be seen that this sequence (starting at 13 and finishing at 1)
+              contains 10 terms. Although it has not been proved yet (Collatz Problem),
+              it is thought that all starting numbers finish at 1. This has been
+              verified on computers for massively large starting numbers, but this
+              does not constitute a proof that it will work this way for <em>all</em>
+              starting numbers.
+              <br/>
+              Write code to determine which starting number, under one million,
+              produces the longest chain. NOTE: Once the chain starts the terms are
+              allowed to go above one million.
+            </p>
+          </exercise>
+        </section>
+        <hr/>
+        
+        <section id="1.6.2">
+          <h2>1.6.2 - Applying What You've Learned</h2>
+          <exercise id="exr1.51">
+            <h3>Exercise 1.51</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-chartier" role="doc-biblioref">[4]</a></cite>)<br/>
+              Sometimes floating point arithmetic does not work like we would expect
+              (and hope) as compared to by-hand mathematics. In each of the following
+              problems we have a mathematical problem that the computer gets wrong.
+              Explain why the computer is getting these wrong.
+            </p> <ol>
+              <li>
+                Mathematically we know that <math>\(\sqrt{5}^2\)</math>
+                should just give us 5 back. In Python type
+                <code>np.sqrt(5)**2 == 5</code>. What do you get and why do you get it?
+              </li> <li>
+                Mathematically we know that
+                <math>\(\left( \frac{1}{49} \right) \cdot 49\)</math>
+                should just be 1. In Python type <code>(1/49)*49 == 1</code>.
+                What do you get and why do you get it?
+              </li> <li>
+                Mathematically we know that <math>\(e^{\ln(3)}\)</math> should just
+                give us 3 back. In Python type <code>np.exp(np.log(3)) == 3</code>.
+                What do you get and why do you get it?
+              </li> <li>
+                Create your own example of where Python gets something incorrect
+                because of floating point arithmetic.
+              </li>
+            </ol>
+          </exercise>
+          <hr/>
+          <exercise id="exr1.52">
+            <h3>Exercise 1.52</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-chartier" role="doc-biblioref">[4]</a></cite>)<br/>
+              In the 1999 movie <em>Office Space</em>, a character creates a program that
+              takes fractions of cents that are truncated in a bank's transactions and
+              deposits them to his own account. This is idea has been attempted in the
+              past and now banks look for this sort of thing. In this problem you will
+              build a simulation of the program to see how long it takes to become a
+              millionaire.<br/>
+              <strong>Assumptions:</strong>
+            </p> <ul>
+              <li>
+                Assume that you have access to 50,000 bank accounts.
+              </li> <li>
+                Assume that the account balances are uniformly distributed between $100
+                and $100,000.
+              </li> <li>
+                Assume that the annual interest rate on the accounts is 5% and the
+                interest is compounded daily and added to the accounts,
+                except that fractions of cents are truncated.
+              </li> <li>
+                Assume that your <code>illegal</code> account initially has a $0 balance.
+              </li>
+            </ul>
+            <p><strong>Your Task:</strong></p>
+            <ol><li>Explain what the code below does.</li></ol>
+            <pre><code class="language-python">
+              import numpy as np
+              accounts = 100 + (100000-100) * np.random.rand(50000, 1)
+              accounts = np.floor(100 * accounts) / 100
+            </code></pre>
+            <ol>
+              <li>
+                By hand (no computer) write the mathematical steps necessary to
+                increase the accounts by (5/365)% per day, truncate the accounts to
+                the nearest penny, and add the truncated amount into an account
+                titled “illegal.”
+              </li> <li>
+                Write code to complete your plan from part (b).
+              </li> <li>
+                Using a <code>while</code> loop, iterate over your code until the
+                illegal account has accumulated $1,000,000. How long does it take?
+              </li>
+            </ol>
+          </exercise>
+          <hr/>
+
+          <exercise id="exr1.53">
+            <h3>Exercise 1.53</h3> <p>
+              (This problem is modified from
+              <cite><a href="#ref-chartier" role="doc-biblioref">[4]</a></cite>)<br/>
+              In the 1991 Gulf War, the Patriot missile defense system failed due to
+              roundoff error. The troubles stemmed from a computer that performed the
+              tracking calculations with an internal clock whose integer values in
+              tenths of a second were converted to seconds by multiplying by a 24-bit
+              binary approximation to <math>\(\frac{1}{10}\)</math>:
+              <span block>
+                \[0.1_{10} \approx 0.00011001100110011001100_2.\]
+              </span>
+            </p> <ol>
+              <li>
+                Convert the binary number above to a fraction by hand (common
+                denominators would be helpful).
+              </li> <li>
+                The approximation of <math>\(\frac{1}{10}\)</math> given
+                above is clearly not equal to <math>\(\frac{1}{10}\)</math>.
+                What is the absolute error in this value?
+              </li> <li>
+                What is the time error, in seconds, after 100 hours of operation?
+              </li> <li>
+                During the 1991 war, a Scud missile traveled at approximately Mach 5
+                (3750 mph). Find the distance that the Scud missle would travel
+                during the time error computed in (c).
+              </li>
+            </ol>
+          </exercise>
+          <hr/>
+
+          <exercise id="exr1.54">
+            <h3>Exercise 1.54</h3> <p>
+              Find the Taylor Series for <math>\(f(x) = \frac{1}{\ln(x)}\)</math>
+              centered at the point <math>\(x_0 = e\)</math>. Then use the
+              Taylor Series to approximate the number
+              <math>\(\frac{1}{\ln(3)}\)</math> to 4 decimal places.
+            </p>
+          </exercise>
+          <hr/>
+
+          <exercise id="exr1.55">
+            <h3>Exercise 1.55</h3> <p>
+              In this problem we will use Taylor Series to build approximations for
+              the irrational number <math>\(\pi\)</math>.
+            </p> <ol>
+              <li>
+                Write the Taylor series centered at <math>\(x_0=0\)</math> for the function
+                <math block>\[ f(x) = \frac{1}{1+x}. \]</math>
+              </li> <li>
+                Now we want to get the Taylor Series for the function
+                <math>\(g(x) = \frac{1}{1+x^2}\)</math>. It would be quite time consuming
+                to take all of the necessary derivatives to get this Taylor Series.
+                Instead we will use our answer from part (a) of this problem to shortcut
+                the whole process.
+                <ol style="list-style-type: lower-roman">
+                  <li>Substitute <span>\(x^2\)</span> for every <span>\(x\)</span> in the Taylor Series for <span>\(f(x) = \frac{1}{1+x}\)</span>.<br />
+                  </li>
+                  <li>Make a few plots to verify that we indeed now have a Taylor Series for the function <span>\(g(x) = \frac{1}{1+x^2}\)</span>.</li>
+                </ol>
+              </li> <li>
+                Recall from Calculus that
+                <math block>\[ \int \frac{1}{1+x^2} dx = \arctan(x). \]</math>
+                Hence, if we integrate each term of the Taylor Series that results from
+                part (b) we should have a Taylor Series for <math>\(\arctan(x)\)</math>.
+                <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
+              </li> <li>
+                Now recall the following from Calculus:
+              </li>
+            </ol> <ul>
+              <li>
+                <math>\(\tan(\pi/4) = 1\)</math>
+              </li> <li>
+                so <math>\(\arctan(1) = \pi/4\)</math>
+              </li> <li>
+                and therefore <math>\(\pi = 4\arctan(1)\)</math>.
+                <p>
+                  Let's use these facts along with the Taylor Series for
+                  <math>\(\arctan(x)\)</math> to approximate <math>\(\pi\)</math>:
+                  we can just plug in <math>\(x=1\)</math> to the series, add up a
+                  bunch of terms, and then multiply by 4. Write a loop in Python that
+                  builds successively better and better approximations of
+                  <math>\(\pi\)</math>. Stop the loop when you have an approximation
+                  that is correct to 6 decimal places.
+                </p>
+              </li>
+            </ul>
+          </exercise>
+          <hr/>
+
+          <exercise id="exr1.56">
+            <h3>Exercise 1.56</h3> <p>
+              In this problem we will prove the famous (and the author's favorite) formula
+              <span block>\[e^{i\theta} = \cos(\theta) + i \sin(\theta).\]</span>
+              This is known as Euler's formula after the famous mathematician
+              Leonard Euler. Show all of your work for the following tasks.
+            </p> <ol>
+              <li>
+                Write the Taylor series for the functions <math>\(e^x\)</math>,
+                <math>\(\sin(x)\)</math>, and <math>\(\cos(x)\)</math>.
+              </li> <li>
+                Replace <math>\(x\)</math> with <math>\(i\theta\)</math> in the
+                Taylor expansion of <math>\(e^x\)</math>. Recall
+                that <math>\(i = \sqrt{-1}\)</math> so <math>\(i^2 = -1\)</math>,
+                <math>\(i^3 = -i\)</math>, and <math>\(i^4 = 1\)</math>.
+                Simplify all of the powers of <math>\(i\theta\)</math> that arise
+                in the Taylor expansion. I'll get you started:
+                <math block>\[\begin{aligned}
+                  e^x &amp;= 1 + x + \frac{x^2}{2} + \frac{x^3}{3!} + \frac{x^4}{4!} +
+                  \frac{x^5}{5!} + \cdots \\
+                  e^{i\theta} &amp;= 1 + (i\theta) + \frac{(i\theta)^2}{2!} +
+                  \frac{(i\theta)^3}{3!} + \frac{(i\theta)^4}{4!} + \frac{(i\theta)^5}{5!} + \cdots \\
+                  &amp;= 1 + i\theta + i^2 \frac{\theta^2}{2!} + i^3 \frac{\theta^3}{3!} +
+                  i^4 \frac{\theta^4}{4!} + i^5 \frac{\theta^5}{5!} + \cdots \\
+                  &amp;= \ldots \text{ keep simplifying ... } \ldots
+                \end{aligned}\]</math>
+              </li> <li>
+                Gather all of the real terms and all of the imaginary terms
+                together. Factor the <math>\(i\)</math> out of the imaginary terms.
+                What do you notice?
+              </li> <li>
+                Use your result from part (c) to prove that
+                <math>\(e^{i\pi} + 1 = 0\)</math>.
+              </li>
+            </ol>
+          </exercise>
+          <hr/>
+
+          <exercise id="exr1.57">
+            <h3>Exercise 1.57</h3> <p>
+              In physics, the <em>relativistic energy</em> of an object is defined as
+              <math block>\[ E_{rel} = \gamma mc^2 \]</math>
+              where
+              <math block>\[ \gamma = \frac{1}{\sqrt{1 - \frac{v^2}{c^2}}}. \]</math>
+              In these equations, <math>\(m\)</math> is the mass of the object,
+              <math>\(c\)</math> is the speed of light
+              (<math>\(c \approx 3 \times 10^8\)</math>m/s), and <math>\(v\)</math>
+              is the velocity of the object. For an object of fixed mass (m) we can
+              expand the Taylor Series centered at <math>\(v=0\)</math> for
+              <math>\(E_{rel}\)</math> to get
+              <math block>\[ E_{rel} = mc^2 + \frac{1}{2} mv^2 + \frac{3}{8} \frac{mv^4}{c^2} + \frac{5}{16} \frac{mv^6}{c^4} + \cdots. \]</math></p>
+              <ol>
+                <li>
+                  What do we recover if we consider an object with zero velocity?
+                </li> <li>
+                  Why might it be completely reasonable to only use the quadratic approximation
+                  <math block>\[ E_{rel} = mc^2 + \frac{1}{2} mv^2 \]</math>
+                  for the relativistic energy equation?
+                  <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+                </li> <li>
+                  (some physics knowledge required)
+                  What do you notice about the second term in the Taylor Series approximation of the relativistic energy function?
+                </li> <li>
+                  Show all of the work to derive the Taylor Series centered at
+                  <math>\(v = 0\)</math> given above.
+                </li>
+              </ol>
+            </p>
+          </exercise>
+          <hr/>
+
+          <exercise id="exr1.58">
+            <h3>Exercise 1.58</h3> <p>
+              (<strong>The Python Caret Operator</strong>)
+              Now that you're used to using Python to do some basic computations
+              you are probably comfortable with the fact that the caret,
+              <code>^</code>, does NOT do exponentiation like it does in many
+              other programming languages. But what does the caret operator do?
+              That's what we explore here.
+            </p> <ol>
+              <li>
+                Consider the numbers <math>\(9\)</math> and <math>\(5\)</math>.
+                Write these numbers in binary representation. We are going to use
+                four bits to represent each number (it is ok if the first bit
+                happens to be zero).
+                <math block>\[\begin{aligned}
+                  9 &amp;=&amp; \underline{\hspace{0.2in}} \, \underline{\hspace{0.2in}} \,
+                  \underline{\hspace{0.2in}} \, \underline{\hspace{0.2in}} \\
+                  5 &amp;=&amp; \underline{\hspace{0.2in}} \, \underline{\hspace{0.2in}} \,
+                  \underline{\hspace{0.2in}} \, \underline{\hspace{0.2in}}
+                \end{aligned}\]</math>
+              </li> <li>
+                Now go to Python and evaluate the expression <code>9^5</code>.
+                Convert Python's answer to a binary representation
+                (again using four bits).
+              </li> <li>
+                Make a conjecture: How do we go from the binary representations of
+                <math>\(a\)</math> and <math>\(b\)</math> to the binary representation
+                for Python's <code>a^b</code> for numbers <math>\(a\)</math> and
+                <math>\(b\)</math>? Test and verify your conjecture on several different
+                examples and then write a few sentences explaining what the caret operator
+                does in Python.
+              </li>
+            </ol>
+          </exercise>
+        </section>
+      </section>
+    </section>
+
+    <section id="ch1refs">
+      <h3>References</h3>
+      <table id="refs">
+        <tr>
+          <td>[2]</td> <td>
+            M. Boelkins, “Active calculus.”
+            <a href="https://activecalculus.org/single/frontmatter.html">
+              https://activecalculus.org/single/frontmatter.html
+            </a>, 2018.
+          </td>
+        </tr>
+        <tr>
+          <td>[3]</td> <td>
+            “ProjectEuler.net.”
+            <a href="https://projecteuler.net/">
+              https://projecteuler.net/
+            </a>.
+          </td>
+        </tr>
+        <tr>
+          <td>[4]</td> <td>
+            A. Greenbaum and T. Chartier,
+            <em>Numerical methods: Design, analysis, and
+              computer implementation of algorithms</em>.
+              Princeton University Press, 2012.
+          </td>
+        </tr>
+      </table>
+    </section>
+    <hr/>
+
+    <!-- This doesn't need to be at the bottom of the page. These should be
+     viewable from the locations where they're actually applied. -->
+    <!-- <section id="ch1footnotes">
+      <h3>Footnotes</h3> <ol>
+        <li>
+          There are many reasons why integrating an infinite series term by term
+          should give you a moment of pause. For the sake of this problem we are
+          doing this operation a little blindly, but in reality we should have
+          verified that the infinite series actually converges uniformly.
+          <a href="ch-intro.html#fnref1" class="footnote-back">↩︎</a>
+        </li> <li>
+          This is something that people in physics and engineering do all the
+          time - there is some complicated nonlinear relationship that they wish
+          to use, but the first few terms of the Taylor Series captures almost
+          all of the behavior since the higher-order terms are very very small.
+          <a href="ch-intro.html#fnref2" class="footnote-back">↩︎</a>
+        </li>
+      </ol>
+    </section> -->
+  </body>
+</html>
