@@ -163,8 +163,408 @@
         <exercise id="exr2.3">
           <h3>Exercise 2.3</h3> <p>
             Was it necessary to say that Sally's function was continuous?
-            Could your technique work if the function were not continuous.
+            Could your technique work if the function were not continuous?
           </p>
+        </exercise>
+        <hr/>
+
+        <p>
+          Now let's get to the math. We'll start the mathematical discussion
+          with a theorem from calculus.
+        </p>
+        <theorem id="theorem2.1">
+          <h3>Theorem 2.1</h3> <p>
+            (<strong>The Intermediate Value Theorem (IVT)</strong>)
+            If <math>\(f(x)\)</math> is a continuous function on the closed interval
+            <math>\([a,b]\)</math> and <math>\(y_*\)</math> lies between
+            <math>\(f(a)\)</math> and <math>\(f(b)\)</math>, then there exists some point
+            <math>\(x_* \in [a,b]\)</math> such that <math>\(f(x_*) = y_*\)</math>.
+          </p>
+        </theorem>
+        <hr/>
+        <exercise id="exr2.4">
+          <h3>Exercise 2.4</h3> <p>
+            Draw a picture to demonstrate what the intermediate value theorem says graphically.
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr2.5">
+          <h3>Exercise 2.5</h3> <p>
+            If <math>\(y_*=0\)</math> the Intermediate Value Theorem gives us
+            important information about solving equations. What does it tell us?
+          </p>
+        </exercise>
+        <hr/>
+
+        <h3>Corollary 2.1</h3> <p>
+          If <math>\(f(x)\)</math> is a continuous function on the closed interval
+          <math>\([a,b]\)</math> and if <math>\(f(a)\)</math> and <math>\(f(b)\)</math>
+          have opposite signs then from the Intermediate Value Theorem we know that
+          there exists some point <math>\(x_* \in [a,b]\)</math> such that ____.
+        </p>
+        <exercise id="exr2.6">
+          <h3>Exercise 2.6</h3> <p>
+            Fill in the blank in the previous corollary and then draw several pictures that
+            indicate why this might be true for continuous functions.
+          </p>
+        </exercise>
+        <hr/>
+
+        <p>
+          The Intermediate Value Theorem (IVT) and its corollary are <em>existence theorems</em>
+          in the sense that they tell us that some point exists. The annoying thing about
+          mathematical existence theorems is that they typically don't tell us <em>how</em>
+          to find the point that is guaranteed to exist - annoying. The method that you developed
+          in Exercises <a href="ch-algebra.html#exr:bisection1">2.1</a> and
+          <a href="ch-algebra.html#exr:bisection2">2.2</a> give one possible way to find the root. <br/>
+          In Exercises <a href="ch-algebra.html#exr:bisection1">2.1</a> and
+          <a href="ch-algebra.html#exr:bisection2">2.2</a>
+          you likely came up with an algorithm such as this:
+        </p> <ul>
+          <li>
+            Say we know that the root of a continuous function lies between
+            <math>\(x=a\)</math> and <math>\(x=b\)</math>.
+          </li> <li>
+            Guess that the root is at the midpoint <math>\(m = \frac{a+b}{2}\)</math>.
+          </li> <li>
+            By using the signs of the function narrow the interval which contains the
+            root to either <math>\([a,m]\)</math> or <math>\([m,b]\)</math>.
+          </li> <li>
+            Repeat.
+          </li>
+        </ul> <p>
+          Now we will turn this optimal strategy into computer code that will simply play the game for us.
+          But first we need to pay careful attention to some of the mathematical details.
+        </p>
+        <hr/>
+
+        <exercise id="exr2.7">
+          <h3>Exercise 2.7</h3> <p>
+            Where is the Intermediate Value Theorem used in the root-guessing strategy?
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="exr2.8">
+          <h3>Exercise 2.8</h3> <p>
+            Why was it important that the function <math>\(f(x)\)</math> is continuous when playing this
+            root-guessing game? Provide a few sketches to demonstrate your answer.
+          </p>
+        </exercise>
+        <hr/>
+        <exercise id="2.9">
+          <h3>Exercise 2.9</h3> <p>
+            (<strong>The Bisection Method</strong>) <strong>Goal:</strong> We want to solve the equation
+            <math>\(f(x) = 0\)</math> for <math>\(x\)</math> assuming that the solution
+            <math>\(x^*\)</math> is in the interval <math>\([a,b]\)</math>. <br/>
+            <strong>The Algorithm:</strong> Assume that <math>\(f(x)\)</math> is continuous on the closed
+            interval <math>\([a,b]\)</math>. To make approximations of the solutions to the equation
+            <math>\(f(x) = 0\)</math>, do the following:
+          </p> <ol>
+            <li>
+              Check to see if <math>\(f(a)\)</math> and <math>\(f(b)\)</math> have opposite signs.
+              You can do this taking the product of <math>\(f(a)\)</math> and <math>\(f(b)\)</math>.
+              <ul>
+                <li>
+                  If <math>\(f(a)\)</math> and <math>\(f(b)\)</math> have different signs then what
+                  does the IVT tell you?
+                </li> <li>
+                  If <math>\(f(a)\)</math> and <math>\(f(b)\)</math> have the same sign then what does
+                  the IVT not tell you? What should you do in this case?
+                </li> <li>
+                  Why does the product of <math>\(f(a)\)</math> and <math>\(f(b)\)</math> tell us something
+                  about the signs of the two numbers?
+                </li>
+              </ul>
+            </li> <li>
+              Compute the midpoint of the closed interval, <math>\(m=\frac{a+b}{2}\)</math>, and
+              evaluate <math>\(f(m)\)</math>.
+              <ul>
+                <li>
+                  Will <math>\(m\)</math> always be a better guess of the root than <math>\(a\)</math>
+                  or <math>\(b\)</math>? Why?
+                </li> <li>
+                  What should you do here if <math>\(f(m)\)</math> is really close to zero?
+                </li>
+              </ul>
+            </li> <li>
+              Compare the signs of <math>\(f(a)\)</math> vs <math>\(f(m)\)</math> and
+              <math>\(f(b)\)</math> vs <math>\(f(m)\)</math>.
+              <ul>
+                <li>
+                  What do you do if <math>\(f(a)\)</math> and <math>\(f(m)\)</math> have opposite signs?
+                </li> <li>
+                  What do you do if <math>\(f(m)\)</math> and <math>\(f(b)\)</math> have opposite signs?
+                </li>
+              </ul>
+            </li> <li>
+              Repeat steps 2 and 3 and stop when <math>\(f(m)\)</math> is <em>close enough</em> to zero.
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+
+        <exercise id="exr2.10">
+          <h3>exercise 2.10</h3> <p>
+            Draw a picture illustrating what the Bisection Method does to approximate solutions to
+            the equation <math>\(f(x) = 0\)</math>
+          </p>
+        </exercise>
+        <hr/>
+
+        <exercise id="exr2.11">
+          <h3>Exercise 2.11</h3> <p>
+            e want to write a Python function for the Bisection Method. Instead of jumping
+            straight into the code we should ALWAYS write pseudo-code first. It is
+            often helpful to write pseudo-code as comments in your file. Use the
+            template below to complete your pseudo-code.
+          </p> <pre><code block>
+            def Bisection(f, a, b, tol):
+              # The input parameters are
+              # f is a Python function or a lambda function
+              # a is the lower guess
+              # b is the upper guess
+              # tol is an optional tolerance for the accuracy of the root
+              
+              # if the user doesn't define a tolerance we need
+              # code to create a default
+              
+              # check that there is a root between a and b
+              # if not we should return an error and break the code
+              
+              # next calculate the midpoint m = (a+b)/2
+              
+              # start a while loop
+              # # in the while loop we need an if statement
+              # # if ...
+              # # elif ...
+              # # elif ...
+              
+              # # we should check that the while loop isn't running away
+              
+              # end the while loop
+              # define and return the root
+          </code></pre>
+        </exercise>
+        <hr/>
+
+        <exercise id="exr2.12">
+          <h3>Exercise 2.12</h3> <p>
+            Now use the pseudo-code as structure to complete a function for the Bisection Method.
+            Also write test code that verifies that your function works properly.
+            Be sure that it can take a Lambda Function as an input along with an initial lower
+            bound, an initial upper bound, and an optional error tolerance. The output should
+            be only 1 single number: the root.
+          </p>
+        </exercise>
+        <br/>
+
+        <exercise id="exr2.13">
+          <h3>Exercise 2.13</h3> <p>
+            Test your Bisection Method code on the following equations.
+          </p> <ol>
+            <li>
+              <math>\(x^2 - 2 = 0\)</math> on <math>\(x \in [0,2]\)</math>
+            </li> <li>
+              <math>\(\sin(x) + x^2 = 2\ln(x) + 5\)</math> on <math>\(x \in [0,5]\)</math>
+              (be careful! make a plot first)
+            </li> <li>
+              <math>\((5-x)e^{x}=5\)</math> on <math>\(x \in [0,5]\)</math>
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+      </section>
+
+      <section id="2.2.2">
+        <h3>2.2.2 - Analysis</h3>
+        <p>
+          After we build any root finding algorithm we need to stop and think about how it
+          will perform on new problems. The questions that we typically have for a
+          root-finding algorithm are:
+        </p> <ul>
+          <li>Will the algorithm always converge to a solution?</li>
+          <li>How fast will the algorithm converge to a solution?</li>
+          <li>Are there any pitfalls that we should be aware of when using the algorithm?</li>
+        </ul>
+        
+        <exercise id="exr2.14">
+          <h3>Exercise 2.14</h3> <p>
+            Discussion: What must be true in order to use the bisection method?
+          </p>
+        </exercise>
+        <br/>
+
+        <exercise id="exr2.15">
+          <h3>Exercise 2.15</h3> <p>
+            Discussion: Does the bisection method work if the Intermediate Value Theorem does not apply?
+            (Hint: what does it mean for the IVT to “not apply?”)
+          </p>
+        </exercise>
+        <hr/>
+
+        <exercise id="exr2.16">
+          <h3>Exercise 2.16</h3> <p>
+            If there is a root of a continuous function <math>\(f(x)\)</math> between
+            <math>\(x=a\)</math> and <math>\(x=b\)</math> will the bisection method
+            always be able to find it? Why / why not?
+          </p>
+        </exercise>
+        <hr/>
+
+        <p>
+          Next we'll focus on a deeper mathematical analysis that will allow us to determine
+          exactly how fast the bisection method actually converges to within a pre-set tolerance.
+          Work through the next problem to develop a formula that tells you
+          exactly how many steps the bisection method needs to take in order to stop.
+        </p>
+        <hr/>
+
+        <exercise id="exr2.17">
+          <h3>Exercise 2.17</h3> <p>
+            Let <math>\(f(x)\)</math> be a continuous function on the interval <math>\([a,b]\)</math>
+            and assume that <math>\(f(a) \cdot f(b) &lt;0\)</math>.
+            A reoccurring theme in Numerical Analysis is to approximate some mathematical thing to
+            within some tolerance. For example, if we want to approximate the solution to the equation
+            <math>\(f(x)=0\)</math> to within <math>\(\varepsilon\)</math> with the bisection method,
+            we should be able to figure out how many steps it will take to achieve that goal.
+          </p> <ol>
+            <li>
+              Let's say that <math>\(a = 3\)</math> and <math>\(b = 8\)</math> and
+              <math>\(f(a) \cdot f(b) &lt; 0\)</math> for some continuous function
+              <math>\(f(x)\)</math>. The width of this interval is 5, so
+              if we guess that the root is <math>\(m=(3+8)/2 = 5.5\)</math> then our error is
+              less than <math>\(5/2\)</math>. In the more general setting, if there is a root of
+              a continuous function in the interval <math>\([a,b]\)</math> then how far off could
+              the midpoint approximation of the root be? In other words, what is
+              the error in using <math>\(m=(a+b)/2\)</math> as the approximation of the root?
+            </li> <li>
+              The bisection method cuts the width of the interval down to a
+              smaller size at every step. As such, the approximation error gets
+              smaller at every step. Fill in the blanks in the following table to
+              see the pattern in how the approximation error changes with each
+              iteration.
+              <table>
+                <thead>
+                  <tr class="header">
+                    <th>Iteration</th>
+                    <th>Width of Interval</th>
+                    <th>Approximation Error</th>
+                  </tr>
+                </thead> <tbody>
+                  <tr>
+                    <td>0</td>
+                    <td><math>\(|b-a|\)</math></td>
+                    <td><math>\(\frac{|b-a|}{2}\)</math></td>
+                  </tr> <tr>
+                    <td>1</td>
+                    <td><math>\(\frac{|b-a|}{2}\)</math></td>
+                    <td></td>
+                  </tr> <tr>
+                    <td>2</td>
+                    <td><math>\(\frac{|b-a|}{2^2}\)</math></td>
+                    <td></td>
+                  </tr> <tr>
+                    <td><math>\(\vdots\)</math></td>
+                    <td><math>\(\vdots\)</math></td>
+                    <td><math>\(\vdots\)</math></td>
+                  </tr> <tr>
+                    <td><math>\(n\)</math></td>
+                    <td><math>\(\frac{|b-a|}{2^n}\)</math></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </li>
+          </table>
+            <li>
+              Now to the key question:<br/>
+              If we want to approximate the solution to the equation <math>\(f(x)=0\)</math> to
+              within some tolerance <math>\(\varepsilon\)</math> then how many iterations of the
+              bisection method do we need to take?<br/>
+              Hint: Set the <math>\(n^{th}\)</math> approximation error from the table equal to
+              <math>\(\varepsilon\)</math>. What should you solve for from there?
+            </li>
+          </ol>
+        </exercise>
+        <hr/>
+
+        <p>
+          In Exercise <a href="ch-algebra.html#exr:bisectionerror">2.17</a> you actually
+          proved the following theorem.
+        </p>
+
+        <theorem id="theorem2.2">
+          <h3>Theorem 2.2 - Convergence Rate of the Bisection Method</h3> <p>
+            If <math>\(f(x)\)</math> is a continuous function with a root in the interval
+            <math>\([a,b]\)</math> and if the bisection method is performed to find the root then:
+          </p> <ul>
+            <li>
+              The error between the actual root and the approximate root will
+              decrease by a factor of 2 at every iteration.
+            </li> <li>
+              If we want the approximate root found by the bisection method to be within a tolerance
+              of <math>\(\varepsilon\)</math> then <math block>\[ \frac{|b-a|}{2^{n+1}} = \varepsilon \]</math>
+              where <math>\(n\)</math> is the number of iterations that it takes to achieve that tolerance.
+              <ul>
+                <li>
+                  Solving for the number of iterations (<math>\(n\)</math>) we get
+                  <math block>\[ n = \log_2\left( \frac{|b-a|}{\varepsilon} \right) - 1. \]</math>
+                </li> <li>
+                  Rounding the value of <math>\(n\)</math> up to the nearest integer gives the number of iterations necessary to
+                  approximate the root to a precision less than <math>\(\varepsilon\)</math>.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </theorem>
+        <hr/>
+
+        <exercise id="exr2.18">
+          <h3>Exercise 2.18</h3> <p>
+            Is it possible for a given function and a given interval that the
+            Bisection Method converges to the root in fewer steps than what you just
+            found in the previous problem? Explain.
+          </p>
+        </exercise>
+        <hr/>
+
+        <exercise id="exr2.19">
+          <h3>Exercise 2.19</h3> <p>
+            Create a second version of your Python Bisection Method function that uses a <code>for</code>
+            loop that takes the optimal number of steps to approximate the root to
+            within some tolerance. This should be in contrast to your first version
+            which likely used a <code>while</code> loop to decide when to stop. Is there an advantage
+            to using one of these version of the Bisection Method over the other?
+          </p>
+        </exercise>
+        <hr/>
+
+        <p>
+          The final type of analysis that we should do on the bisection method is to make plots of the
+          error between the approximate solution that the bisection method gives you and the exact solution
+          to the equation. This is a bit of a funny thing! Stop and think about this for a second:
+          <em>if you know the exact solution to the equation then why are you solving it numerically in the
+          first place!?!?</em> However, whenever you build an algorithm you need to test it on
+          problems where you actually do know the answer so that you can can be somewhat sure
+          that it isn't giving you nonsense. Furthermore, analysis like this tells us how fast the
+          algorithm is expected to perform.
+          <br/>
+          From Theorem <a href="#2/exm2.2">2.2</a> you know that the bisection
+          method cuts the interval in half at every iteration. You proved in Exercise
+          <a href="#2/exr2.17">2.17</a> that the error given by the bisection method
+          is therefore cut in half at every iteration as well.
+          The following example demonstrate this theorem graphically.
+        </p>
+        <hr/>
+
+        <example id="exm2.1">
+          <h3>Example 2.1</h3> <p>
+
+          </p>
+        </example>
+        <hr/>
+
+        <exercise id="exr2.20">
+
         </exercise>
       </section>
     </section>
