@@ -10,17 +10,17 @@ let closeTag = new Parser.Sequence(
   "<", Parser.ws, '/', Parser.ws, new Parser.Regex(/^\w*/), Parser.ws, '>'
 ).joinString();
 let tagContents = new Parser.Any(
-  new Parser.Regex(/[^<>]+/)
+  new Parser.Regex(/^[^\<\>]+/)
 );
 let tag = new Parser.Sequence(
   openTag,
-  tagContents,
+  new Parser.Some(tagContents, 0),
   closeTag
 ).audit((val, src, start, end) => {
-  let ret = {};
-  val.pop();
-  let tagName = val.shift();
-  ret[tagName] = val.join('');
+  let ret = {
+    tagName: val[0],
+    contents: val[1]
+  };
   return [true, end, ret];
 });
 tagContents.predicates.push(tag);
@@ -48,6 +48,6 @@ let html = new Parser.Some(tag);
     // for (let match of matches) {
     //   console.log(match[1]);
     // }
-    console.log(html.exec("<test><foo>f</foo></test>")[2]);
+    console.log(JSON.stringify(html.exec("<test><foo>f</foo><bar></bar></test>")[2], null, 2));
   } catch (e) {console.error(e);}
 })();

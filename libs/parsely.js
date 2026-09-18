@@ -93,7 +93,7 @@ export default class Parser {
         if (this.skip) {
           return [true, newi, result[0]];
         } else {
-          return [true, newi, str.substring(0, newi)];
+          return [true, newi, str.substring(i, newi)];
         }
       }
       return [false, i];

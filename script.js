@@ -13,6 +13,13 @@ function utf8_to_str(a) {
     return decodeURIComponent(s)
 }
 
+function startsWithAny(str, ...tests) {
+  for (let test of tests) {
+    if (str.startsWith(test)) return true;
+  }
+  return false;
+}
+
 // Preprocessing
 
 /**
@@ -59,6 +66,9 @@ function preprocess(root) {
       let newNode = document.createElement("mathy");
       newNode.classList.add(...el.classList);
       newNode.replaceChildren(...el.childNodes);
+      if (!startsWithAny(newNode.innerText, "\\(", "\\[", "\\{")) {
+        newNode.innerText = `\\(${newNode.innerText}\\)`;
+      }
       el.replaceWith(newNode);
   });
   // root.getElementsByTagName("math").forEach(el => {
