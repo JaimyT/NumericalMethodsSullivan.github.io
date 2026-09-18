@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Numerical Methods - Algebra</title>
+    <meta name="" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <style>
+      blockquote,div,section,code,math,exercise,example,definition,figure {
+        padding: 4px;
+        margin: 4px;
+        border-radius: 4px;
+      }
+      [block],figure {display: block;}
+      a {color: darkblue;}
+      blockquote,figure {background-color: lightblue;}
+      math {
+        display: inline;
+        color: darkslategray;
+        background-color: lightblue;
+        font-style: italic;
+      }
+      code {
+        background-color: lightgray;
+        color: darkslategray;
+      }
+      pre>code {display: block;}
+    </style>
+  </head>
+  <body>
+    <section id="A">
+      <h1>Introduction to Python</h1>
+      <p>
+        In this chapter we will walk thorugh some of the basics of using
+        Python 3 - the powerful general-purpose programming language that
+        we'll use throughout this class. I'm assuming throughout this chapter
+        that you're familiar with other programming languages such as R,
+        Java, C, or MATLAB. For one, I'm assuming that you know the basics
+        about what a programing language is and does. There are a lot of
+        similarities between several of these languages, and in fact they
+        borrow heavily from each other in syntax, ideas, and implementation.
+        <br/>
+        While you work through this chapter it is expected that you do
+        every one of the examples and exercises on your own.
+        The material in this chapter is also supported by a collection of
+        Youtube videos which you can find here:
+        <a href="https://www.youtube.com/playlist?list=PLftKiHShKwSO4Lr8BwrlKU_fUeRniS821">
+          www.youtube.com/playlist...
+        </a>
+      </p> <section id="A.1">
+        <h2>Why Python?</h2> <p>
+          We are going to use Python because it is...
+        </p> <ul>
+          <li>Free</li>
+          <li>Very widely used</li>
+          <li>Flexible</li>
+          <li>Relatively easy to learn</li>
+          <li>...and quite powerful.</li>
+        </ul> <p>
+          It is important to keep in mind that Python is a general purpose
+          langauge that we will be using for scientific computing.
+          The purpose of scientific computing is <em>not</em> to build apps,
+          build software, manage databases, or develop user interfaces.
+          Instead, scientific computing is the use of a computer programming
+          language (like Python) along with mathematics to solve scientific
+          and mathematical problems.
+          For this reason it is definitely not our purpose to write a comprehensive
+          guide for how to use Python. We'll only cover what is necessary for
+          our computing needs. You'll learn more as the course progresses, so
+          use this chapter as a reference just to get going with the language.
+          <br/>
+          There is an overwhelming abundance of information available about
+          Python and the suite of tools that we will frequently use.
+        </p> <ul>
+          <li>Python <a href="https://www.python.org/">
+            https://www.python.org/</a>,
+          </li> <li><code>numpy</code> (numerical Python)
+            <a href="https://www.numpy.org/">
+              https://www.numpy.org/
+            </a>,
+          </li> <li><code>matplotlib</code> (a suite of plotting tools)
+            <a href="https://matplotlib.org/">
+              https://matplotlib.org/
+            </a>,
+          </li> <li><code>scipy</code> (scientific Python)
+            <a href="https://www.scipy.org/">
+              https://www.scipy.org/
+            </a>, and
+          </li> <li><code>sympy</code> (symbolic Python)
+            <a href="https://www.sympy.org/en/index.html">
+              https://www.sympy.org/en/index.html
+            </a>.
+          </li>
+        </ul> <p>
+          These tools together provide all the computational power that we will
+          need, and they're free!
+        </p>
+      </section>
+
+      <section id="A.2">
+        <h2>A.2 - Getting Started</h2> <p>
+          Every computer is its own unique flower with its own unique requirements.
+          Hence, we will not spend time here giving you all of the ways that you
+          can install Python and all of the associated packages necessary for this
+          course. For this class we highly recommend that you use the Google Colab
+          notebook tool for writing your Python code:
+          <a href="https://colab.research.google.com">
+            https://colab.research.google.com
+          </a>. Google Colab allows you to keep all of your Python code on your
+          Google Drive. The Colab environment is meant to be a free and
+          collaborative version of the popular Jupyter Notebook project.
+          Jupyter Notebooks allow you to write and test code as well as to mix
+          writing (including LaTeX formatting) in along with your code and your output.
+        </p> <p>
+          If you insist on installing Python on your own machine then I highly
+          recommend that you start with the Anaconda downloader
+          <a href="https://www.anaconda.com/distribution/">
+            https://www.anaconda.com/distribution/
+          </a>
+          since it includes the most up-to-date version of Python as well
+          as some of the common tools for writing Python code.
+        </p>
+      </section>
+
+      <section id="A.3">
+        <h2>A.3 - Hello, World!</h2> <p>
+          As is tradition for learning a new programming language, we should
+          write code that prints the words "Hello, world!" to the screen.
+          The code below does just that.
+        </p>
+        <code>print(&quot;Hello, world!&quot;)</code>
+        <p>
+          In a Jupyter Notebook you will write your code in a code block, and
+          when you're ready to run it you can press shift+enter (or control+enter)
+          to see the output. Shift+enter will evaluate your code and advance to
+          the next block of code. Control+enter will evaluate without advancing
+          the cursor to the next block.
+        </p>
+        <hr/>
+        <exercise id="exrA.1">
+          <h3>Exercise A.1</h3> <p>
+            Write code to print your name to the screen.
+          </p>
+        </exercise>
+        <hr/>
+
+        <exercise id="exrA.2">
+          <h3>Exercise A.2</h3> <p>
+            You should now spend a bit of time poking around in Jupyter Notebooks.
+            Figure out how to: <ul>
+              <li>save a file</li>
+              <li>load a new iPython Notebook (Jupyter Notebook) file from your computer or Google Drive</li>
+              <li>write text, including LaTeX formatted mathematics in a Jupyter Notebook</li>
+              <li>share and download a Google Colab document</li>
+              <li>use the keyboard to switch between writing text and writing code.</li>
+            </ul>
+          </p>
+        </exercise>
+        <hr/>
+      </section>
+
+      <section id="A.4">
+        <h2>A.4 - Python Programming Basics</h2> <p>
+          Throughout the remainder of this chapter it is expected that you run
+          all of the blocks of code on your own and critically evaluate and
+          understand the output.
+        </p>
+
+        <section id="A.4.1">
+          <h3>A.4.1 - Variables</h3> <p>
+            Variables in Python can contain letters (lower case or capital),
+            numbers 0-9 and some special characters such as the underscore.
+            Variable names should start with a letter.
+            Of course there are a bunch of reserved words (just like in
+            any other language). You should look up what the reserved words are
+            in Python so you don't accidentally use them.
+            As of the time of this edit, here is a basic reference list:
+          </p>
+          <table id="reserved">
+            <tr>
+              <td>and</td>
+              <td>or</td>
+              <td>not</td>
+              <td>True</td>
+              <td>False</td>
+            </tr> <tr>
+              <td>as</td>
+              <td>is</td>
+              <td>in</td>
+              <td>None</td>
+              <td>class</td>
+            </tr> <tr>
+              <td>def</td>
+              <td>async</td>
+              <td>await</td>
+              <td>lambda</td>
+              <td>yield</td>
+            </tr> <tr>
+              <td>if</td>
+              <td>elif</td>
+              <td>else</td>
+              <td>match</td>
+              <td>case</td>
+            </tr> <tr>
+              <td>for</td>
+              <td>while</td>
+              <td>break</td>
+              <td>continue</td>
+              <td>pass</td>
+            </tr> <tr>
+              <td>raise</td>
+              <td>try</td>
+              <td>except</td>
+              <td>finally</td>
+              <td>return</td>
+            </tr> <tr>
+              <td>import</td>
+              <td>from</td>
+              <td>del</td>
+              <td>global</td>
+              <td>nonlocal</td>
+            </tr>
+          </table>
+          <p>
+            You can do the typical things with variables.
+            Assignment is with an equal sign (be careful R users,
+            we will not be using the left-pointing arrow here!)
+          </p> <p>
+            <strong>Warning:</strong> When defining numerical variables
+            you don't always get floating poing numbers. In some programming
+            languages, if you write <code>x=1</code> it is defined as an
+            integer (with no decimal digits) but if you assign <code>x=1.0</code>
+            it is assigned as a floating point number.
+          </p> <pre><code block>
+            # assign some variables
+            x = 7 # integer assignment of the integer 7
+            y = 7.0 # floating point assignment of the decimal number 7.0
+            print("The variable x is ", x, " and has type ", type(x), ".\n")
+            print("The variable y is ", y, " and has type ", type(y), ".\n")
+            # multiplying by a float will convert an integer to a float
+            print("Multiplying x by 1.0 gives ", 1.0 * x, "\n")
+            print("The type of this value is ", type(1.0 * x), ".\n")
+          </code></pre> <p>
+            Note that the allowed mathematical operations are:
+          </p> <ul>
+            <li>Addition <code>+</code></li>
+            <li>Subtraction <code>-</code></li>
+            <li>Multiplication <code>*</code></li>
+            <li>Division <code>/</code></li>
+            <li>Integer (modular) division <code>//</code></li>
+            <li>Exponentiation <code>**</code></li>
+          </ul> <p>
+            That's right, the caret key, ^, is NOT exponentiation in Python (sigh).
+            Instead, we have to get used to ** for exponents.
+          </p> <pre><code block>
+            x = 8.0
+            y = x ** 2 # square the value in x
+            print(y)
+          </code></pre>
+          <hr/>
+          <exercise id="A.4">
+            <h3>Exercise A.4</h3> <p>
+              What happens if you type <code>7^2</code> into Python?
+              What does it give you? Can you figure out what it is doing?
+            </p>
+          </exercise>
+          <hr/>
+
+          <exercise id="A.5">
+            <h3>Exercise A.5</h3> <p>
+              Write code to define positive integers
+              <math>\(a, b,\)</math> and <math>\(c\)</math>
+              of your own choosing. Then calculate
+              <math>\(a^2\)</math>, <math>\(b^2\)</math>,
+              and <math>\(c^2\)</math>. When you have all three values
+              computed, check to see if your three values form a Pythagorean
+              Triple so that <math>\(a^2 + b^2 = c^2\)</math>.
+              Have Python simply say True or False to verify that you do,
+              or do not, have a Pythagorean Triple defined.
+              Hint: you will need to use the <code>==</code> Boolean check
+              just like in other programming languages.
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.4.2">
+          <h3>A.4.2 - Indexing and Lists</h3> <p>
+            Lists are a key component to storing data in Python.
+            Lists are exactly what the name says: lists of things.
+            In our case, usually the entries are floating point numbers.
+          </p> <p>
+            <strong>Warning:</strong> Python indexing starts at 0
+            whereas some other programming languages have indexing starting at 1.
+            In other words, the first entry of a list has index 0,
+            the second entry as index 1, and so on. We just have to keep this in mind.
+          </p> <p>
+            We can extract a part of a list using the syntax <code>list[start:stop]</code>
+            which extracts elements between index <code>start</code> and
+            <code>stop - 1</code>. Take note that Python stops reading at the second
+            to last index. This often catches people off guard when they first start
+            with Python.
+          </p>
+          <hr/>
+
+          <example id="exmA.1">
+            <h3>Example A.1 - Lists and Indexing</h3> <p>
+              Let's look at a few examples of indexing from lists. In this example
+              we will use the list of numbers 0 through 8. This list contains
+              9 numbers indexed from 0 to 8.
+            </p> <ul>
+              <li>
+                Create the list of numbers 0 through 8 and then
+                only print the element with index 0.
+                <pre><code block>
+                  MyList = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                  print(MyList[0])
+                </code></pre>
+              </li> <li>
+                Print all elements up to, but not including, the third element of <code>MyList</code>.
+                <pre><code block>
+                  MyList = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                  print(MyList[:2])
+                </code></pre>
+              </li> <li>
+                Print the last element of <code>MyList</code> (this is a handy trick!)
+                <pre><code block>
+                  MyList = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                  print(MyList[-1])
+                </code></pre>
+              </li> <li>
+                Print the elements indexed 1 through 4. Beware! this is not the first through fifth element.
+                <pre><code block>
+                  MyList = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                  print(MyList[1:5])
+                </code></pre>
+              </li> <li>
+                Print every other element in the list starting with the first.
+                <pre><code block>
+                  MyList = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                  print(MyList[0::2])
+                </code></pre>
+              </li> <li>
+                Print the last three elements of <code>MyList</code>
+                <pre><code block>
+                  MyList = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                  print(MyList[-3:])
+                </code></pre>
+              </li>
+            </ul>
+          </example>
+          <hr/>
+
+          <example id="exmA.2">
+            <h3>Example A.2 - Range and Lists</h3> <p>
+              Let's look at another example of indexing in lists.
+              In this one, we'll use the <code>range</code> function to build
+              the initial list of numbers. Read the code carefully so you know
+              what each line does, and then execute the code on your own
+              to verify your thinking.
+              <pre><code block>
+                # Range is a handy function for creating a sequence of integers.
+                MySecondList = range(4, 20)
+                print(MySecondList) # This is a "range oject" in Python.
+                # When using range() we won't actually store all of the
+                # values in memory.
+                print(list(MySecondList))
+                # Notice that we didn't create the last element!
+
+                print(MySecondList[0]) # print the first element (index 0)
+                print(MySecondList[-5]) # print the fifth element from the end
+                print(MySecondList[-1:0:-1]) # this creates a new range object
+                # Take careful note of how the above range object is defined.
+                # Print the last element to the one indexed by 1 counting backward.
+                print(list(MySecondList[-1:0:-1]))
+                print(MySecondList[-1::-1]) # creates another new range object
+                print(list(MySecondList[-1::-1])) # print the whole list backwards
+                print(MySecondList[::2]) # create another new range object
+                print(list(MySecondList[::2])) # print every other element
+              </code></pre>
+            </p>
+          </example>
+          <hr/>
+          <p>
+            In Python, elements in a list do not need to be the same type.
+            You can mix integers, floats, strings, lists, etc.
+          </p>
+          <hr/>
+          <example id="A.3">
+            <h3>Example A.3</h3> <p>
+              In this example we see a list of several items that have different
+              data types: <code>float</code>, <code>integer</code>,
+              <code>string</code>, and <code>complex</code>. Note that the
+              imaginary number <math>\(i\)</math> is represented by <math>\(1j\)</math>
+              in Python. This is common in many scientific disciplines and is just
+              another thing that we'll need to get used to in Python.
+              (For example, <math>\(j\)</math> is commonly used as the symbol for
+              the imaginary unit <math>\(\sqrt{-1}\)</math> in electrical engineering
+              since <math>\(i\)</math> is the symbol commonly used for electric
+              current, and using <math>\(i\)</math> for both would be problematic.)
+            </p> <pre><code block>
+              MixedList = [1.0, 7, 'Bob', 1-1j]
+              print(MixedList)
+              print(type(MixedList[0]))
+              print(type(MixedList[1]))
+              print(type(MixedList[2]))
+              print(type(MixedList[3]))
+              # Notice that we use 1j for the imaginary number i.
+            </code></pre>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.6">
+            <h3>Exercise A.6</h3> <p>
+              In this exercise you will put your new list skills into practice.
+              <ul>
+                <li>
+                  Create the list of the first several Fibonacci numbers:
+                  <math block>\(1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89\)</math>
+                </li> <li>
+                  Print the first four elements of the list
+                </li> <li>
+                  Print every third element of the list starting with the first.
+                </li> <li>
+                  Print the last element of the list.
+                </li> <li>
+                  Print the list in reverse order.
+                </li> <li>
+                  Print the list starting at the last element and counting
+                  backwards by every other element.
+                </li>
+              </ul>
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.4.3">
+          <h2>A.4.3 - List Operations</h2> <p>
+            Python is awesome about allowing you to do things like appending items
+            to lists, removing items from lists, and inserting items into lists.
+            Note in all of the examples below that we are using the code <br/>
+            <code>variable.function</code><br/>
+            where you put the variable name, a dot, and the thing that you would
+            like to do to that variable. For example, <code>MyList.append(7)</code>
+            will append the number <math>\(7\)</math> to the list <code>MyList</code>.
+            This is a common programming feature in Python and we'll use it often.
+          </p>
+          <hr/>
+
+          <example id="exmA.4">
+            <h3>Example A.4</h3> <p>
+              The <code>.append</code> function can be used to append an element
+              to the end of a list.
+              <pre><code block>
+                MyList = [0, 1, 2, 3]
+                print(MyList)
+                MyList.append('a') # append the string 'a' to the end of the list
+                print(MyList)
+                MyList.append('a') # do it again ... just for fun
+                print(MyList)
+                MyList.append(15) # append the number 15 to the end of the list
+                print(MyList)
+              </code></pre>
+            </p>
+          </example>
+          <hr/>
+
+          <example id="exmA.5">
+            <h3>Example A.5</h3> <p>
+              The <code>.remove</code> function can be used to remove an element from the list.
+              <pre><code block>
+                MyList = [0, 1, 2, 3]
+                MyList.append('a') # append the string 'a' to the end of the list
+                MyList.append('a') # do it again ... just for fun
+                MyList.append(15) # append the number 15 to the end of the list
+                MyList.remove('a') # remove the first instance of 'a' from the list
+                print(MyList)
+                MyList.remove(3) # now let's remove the 3
+                print(MyList)
+              </code></pre>
+            </p>
+          </example>
+          <hr/>
+
+          <example id="exmA.6">
+            <h3>Example A.6</h3> <p>
+              The <code>.insert</code> function can be used to insert an element at a location in the list.
+              <pre><code block>
+                MyList = [0, 1, 2, 3]
+                MyList.append('a') # append the string 'a' to the end of the list
+                MyList.append('a') # do it again ... just for fun
+                MyList.append(15) # append the number 15 to the end of the list
+                MYList.remove('a') # remove the first instance of 'a' from the list
+                MyList.remove(3) # now let's remove the 3
+                print(MyList)
+                MyList.insert(0, 'A') # insert the letter 'A' at the 0-indexed spot
+                MyList.insert(3, 'B') # insert the letter 'B' a the spot with index 3
+                print(MyList) # remember that index 3 means the fourth spot in the list
+              </code></pre>
+            </p>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.7">
+            <h3>Exercise A.7</h3> <p>
+              In this exercise you will go a bit further with your
+              list operation skills.
+              <ol>
+                <li>
+                  Create the list of the first several Lucas numbers:
+                  <math>\(1, 3, 4, 7, 11, 18, 29, 47\)</math>
+                </li> <li>
+                  Add the next three Lucas numbers to the end of the list.
+                </li> <li>
+                  Remove the number 3 from the list.
+                </li> <li>
+                  Insert the 3 back into the list at the correct spot.
+                </li> <li>
+                  Print the list in reverse order.
+                </li> <li>
+                  Do a few other list operations to this list and
+                  report your findings.
+                </li>
+              </ol>
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.4.4">
+          <h2>A.4.4 - Tuples</h2> <p>
+            In Python, a "tuple" is like an ordered pair
+            (or order triple, or order quadruple, etc.) in mathematics.
+            We will occasionally see tuples in our work in numerical analysis
+            so for now let's just give a couple of code snippets showing how
+            to store and read them.
+          </p> <p>
+            We can define the tuple of numbers <math>\((10, 20)\)</math> in Python as follows.
+          </p> <pre><code block>
+            point = 10, 20 # notice that we don't need the parentheses.
+            print(point, type(point))
+          </code></pre> <p>
+            We can also define a tuple with parentheses if we like. Python doesn't care.
+          </p> <pre><code block>
+            point = (10, 20) # now we define the tuple with parentheses
+            print(point, type(point))
+          </code></pre> <p>
+            We can then unpack the tuple into components if we wish.
+          </p> <pre><code block>
+            point = (10, 20)
+            x, y = point
+            print("x = ", x)
+            print("y = ", y)
+          </code></pre>
+        </section>
+
+        <section id="A.4.5">
+          <h2>A.4.5 - Control Flow: Loops and If Statements</h2> <p>
+            Any time you're doing some repetitive task with a programming language
+            you should actually be using a loop. Just like in other programming
+            languages we can do loops and conditional statements in very easy ways
+            in Python. The thing to keep in mind is that the Python language is
+            very white-space-dependent. This means that your indentations need
+            to be correct in order for a loop to work. You could get away with
+            sloppy indention in other languages, but not so in Python.
+            Also, in some languages (like R and Java) you need to wrap your loops
+            in curly braces. Again, not so in Python.
+          </p> <p>
+            <strong>Caution:</strong> Be really careful of the white space in your code when you write loops.
+          </p>
+          
+          <section id="A.4.5.1">
+            <h3>A.4.5.1 - <code>for</code> Loops</h3> <p>
+              A <code>for</code> loop is designed to do a task a certain number
+              of times and then stop. This is a great tool for automating
+              repetitive tasks, but it is also nice for building sequences,
+              summing series, or just checking lots of examples.
+              The following are several examples of Python <code>for</code> loops.
+              Take careful note of the syntax for a <code>for</code> loop
+              as it is the same as for other loops and conditional statements.
+            </p> <ol>
+              <li>A control statement,</li>
+              <li>A colon, a new line,</li>
+              <li>indent four spaces,</li>
+              <li>some programming statements.</li>
+            </ol> <p>
+              When you are done with the loop just back out of the indentation.
+              There is no need for an <code>end</code> keyword or a curly bracket.
+              All of the control statements in Python are white-space-dependent.
+            </p>
+            <hr/>
+
+            <example id="exmA.7">
+              <h3>Example A.7</h3> <p>
+                Print the first 6 perfect squares.
+                <pre><code block>
+                  for x in [1, 2, 3, 4, 5, 6]:
+                    print(x ** 2)
+                </code></pre>
+              </p>
+            </example>
+            <hr/>
+
+            <example id="exmA.8">
+              <h3>Example A.8</h3> <p>
+                Print the names in a list.
+                <pre><code block>
+                  NamesList = ['Alice', 'Billy', 'Charlie', 'Dom', 'Enrique', 'Francisco']
+                  for name in NamesList:
+                    print(name)
+                </code></pre>
+              </p>
+            </example>
+            <hr/>
+            <p>
+              In Python you can use a more ocmpact notation for <code>for</code>
+              loops sometimes. This takes a bit of getting used to, but is super slick!
+            </p>
+
+            <example id="exmA.9">
+              <h3>Example A.9</h3> <p>
+                Create a list of the perfect squares from 1 to 9.
+              </p> <pre><code block>
+                # create a list of the perfect squares from 1 to 9
+                CoolList = [x**2 for x in range(1, 10)]
+                print(CoolList)
+                # Then print the sum of this list
+                print("The sum of the first 9 perfect squares is ", sum(CoolList))
+              </code></pre> <p>
+                This is equivalent to the following code:
+              </p> <pre><code block>
+                # create a list of the perfect squares from 1 to 9
+                CoolList = []
+                for x in range(1, 10):
+                  coolList.append(x**2)
+                # Then print the sum of this list
+                print("The sum of the first 9 perfect squares is ", sum(CoolList))
+              </code></pre>
+            </example>
+            <hr/>
+            <p>
+              <code>for</code> loops can also be used to build recursive sequences
+              as can be seen in the next couple of examples.
+            </p>
+
+            <example id="exmA.10">
+              <h3>Example A.10</h3> <p>
+                In the following code we write a <code>for</code> loop that
+                outputs a list of the first 7 iterations of the sequence
+                <math>\(x_{n+1}=-0.5x_n+1\)</math> starting with
+                <math>\(x_0=3\)</math>. Notice that we're using the function
+                <code>x.append</code> instead of <math>\(x[n+1]\)</math>
+                to append the new term to the list. This allows us to
+                grow the length of the list dynamically as the loop progresses.
+              </p> <pre><code block>
+                x=[3.0]
+                for n in range(0, 7):
+                  x.append(-0.5 * x[n] + 1)
+                  print(x) # print the whole list x at each step of the loop
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.11">
+              <h3>Example A.11</h3> <p>
+                As an alternative to the code from the previous example, we can
+                pre-allocate the memory in an array of zeroes. This is done
+                with the clever code <code>x = [0] * 10</code>,
+                literally multiplying a list by some number, like 10,
+                creates a new list by repeating it 10 times.
+              </p> <p>
+                Now we'll build a sequence with pre-allocated memory.
+              </p> <pre><code block>
+                x = [0] * 7
+                x[0] = 3.0
+                for n in range(0, 6):
+                  x[n+1] = -0.5 * x[n] + 1
+                  print(x) # This print statement shows x at each iteration
+              </code></pre>
+            </example>
+            <hr/>
+
+            <exercise id="exrA.8">
+              <h3>Exercise A.8</h3> <p>
+                We want to sum the first 100 perfect cubes.
+                Let's do this in two ways.
+                <ul>
+                  <li>
+                    Start off with a variable called Total at 0 and write a
+                    <code>for</code> loop that adds the next perfect cube
+                    to the running total.
+                  </li> <li>
+                    Write a <code>for</code> loop that builds the sequence of
+                    the first 100 perfect cubes. After the list has been built
+                    find the sum with the sum function.
+                  </li>
+                </ul>
+              </p> <p>
+                The answer is <code>25502500</code>, so check your work.
+              </p>
+            </exercise>
+            <hr/>
+
+            <exercise id="A.9">
+              <h3>Exercise A.9</h3> <p>
+                Write a <code>for</code> loop that builds the first 20 terms of the sequence
+                <math>\(x_{n+1}=1-x_n^2\)</math> with <math>\(x_0=0.1\)</math>.
+                Pre-allocate enough memory in your list and then fill it with the terms
+                of the sequence. Only print the list after all fo the computations have been
+                completed.
+              </p>
+            </exercise>
+            <hr/>
+          </section>
+          
+          <section id="A.4.5.2">
+            <h2>A.4.5.2 - <code>while</code> Loops</h2> <p>
+              A <code>while</code> loop repeats some task (or sequence of tasks)
+              <em>while</em> a logical condition is true. It stops when the
+              logical condition is false. The structure in Python is the same
+              as with <code>for</code> loops.
+            </p>
+            <example id="exmA.12">
+              <h3>Example A.12</h3> <p>
+                Print the numbers 0 through 4 and then the word "done."
+                We'll do this by starting a counter variable, <code>i</code>, at 0
+                and increment it every time we pass through the loop.
+              </p> <pre><code block>
+                i = 0
+                while i &lt; 5:
+                  print(i)
+                  i += 1 # increment the counter
+                print("done")
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.13">
+              <h3>Example A.13</h3> <p>
+                Now let's use a <code>while</code> loop to build the sequence of
+                Fibonacci numbers and stop when the newest number in the sequence
+                is greater than 1000. This is the perfect task for a <code>while</code>
+                loop instead of a <code>for</code> loop, since we don't know how
+                many steps it will take before we start the task.
+              </p> <pre><code block>
+                Fib = [1, 1]
+                while Fib[-1] &lt;= 1000:
+                  Fib.append(Fib[-1] + Fib[-1])
+                print("The last few terms in the list are:\n", Fib[-3:])
+              </code></pre>
+            </example>
+            <hr/>
+
+            <exercise id="exrA.10">
+              <h3>Exercise A.10</h3> <p>
+                Write a <code>while</code> loop that sums the terms in the Fibonacci
+                sequence until the <em>sum</em> is larger than 1000.
+              </p>
+            </exercise>
+            <hr/>
+          </section>
+
+          <section id="A.4.5.3">
+            <h2>A.4.5.3 - <code>if</code> Statements</h2> <p>
+              Conditional (<code>if</code>) statements allow you to run a piece of code
+              only under certain conditions. This is handy when you have different
+              tasks to perform depending on the situation.
+            </p>
+
+            <example id="exmA.14">
+              <h3>Example A.14</h3> <p>
+                Let's look at a simple example of an <code>if</code> statement in Python.
+              </p> <pre><code block>
+                Name = "Alice"
+                if Name == "Alice":
+                  print("Hello, Alice. Isn't it a lovely day to learn Python?")
+                else:
+                  print("You're not Alice. Where is Alice?")
+                Name = "Billy"
+                
+                Name = "Alice"
+                if Name == "Alice":
+                  print("Hello, Alice. Isn't it a lovely day to learn Python?")
+                else:
+                  print("You're not Alice. Where is Alice?")
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.15">
+              <h3>Example A.15</h3> <p>
+                For another example, if we get a random number between 0 and 1,
+                we could have Python print a different message depending on
+                whether it was above or below 0.5. Run the code below several times,
+                and you'll see different results each time.
+              </p> <p>
+                Note: we have to import the <code>numpy</code> package to get the random number
+                generator for Python. Don't worry about that for now. We'll talk about packages in a moment.
+              </p> <pre><code block>
+                import numpy as np
+                x = np.random.rand() # get a random number using numpy
+                if x &lt; 0.5:
+                  print(x, " is less than one half")
+                else:
+                  print(x, " is not less than one half")
+              </code></pre> <p>
+                Note that this may produce the same result each time for certain environments,
+                such as if you installed Python on your own computer. If this is the case,
+                simply copy everything (except the import line) to run it several times in the same
+                script to get a few different samples.
+              </p> <pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.16">
+              <h3>Example A.16</h3> <p>
+                In many programming tasks it is handy to have several different choices
+                between tasks instead of just two choices as in the previous examples.
+                This is a job for the <code>elif</code> keyword. <br/>
+                This is the same code as last time except we will make the decision
+                at 0.33 and 0.67
+              </p> <pre><code block>
+                import numpy as np
+                x = np.random.rand() # get a random number using numpy
+                if x &lt; 1/3:
+                  print(x, " &lt; 1/3")
+                elif x &lt; 2/3:
+                  print("1/3 &lt;= ", x, " &lt; 2/3")
+                else:
+                  print(x, " &gt;= 2/3")
+              </code></pre>
+            </example>
+            <hr/>
+
+            <exercise id="exrA.11">
+              <h3>Exercise A.11</h3> <p>
+                Write code to give the Collatz Sequence:
+              </p> <math block>
+                \[x_{n+1} = \left\{ \begin{array}{ll} x_n / 2, &amp;
+                \text{$x_n$ is even} \\ 3 x_n + 1, &amp;
+                \text{otherwise} \end{array} \right.\]
+              </math> <p>
+                starting with a positive integer of your choosing. The sequence
+                will converge to 1, so your code should also stop when it reaches 1.
+              </p>
+            </exercise>
+            <hr/>
+          </section>
+          
+        </section>
+        
+        <section id="A.4.6">
+          <h2>A.4.6 - Functions</h2> <p>
+            Mathematicians and programmers talk about functions in very similar ways,
+            but they aren't exactly the same. When we say "function" in a programming
+            sense, we are talking about a chunk of code that you can pass parameters
+            and expect an output of some sort.
+            This is not unlike the mathematician's version, but unlike a mathematical
+            function we can have multiple outputs for a programmatic function.
+            For example, in the mathematical function <math>
+              \(f(x) = x^2 + 3\)
+            </math>, we pass a real number in as an input and get a real number out
+            as an output. In a programming language, on the other hand, you might send in
+            a function and a few real numbers and output a plot of the function along with
+            the definite integral of the function between the real numbers. Notice that
+            there can be multiple inputs and multiple outputs, and that none have to be
+            the same type of object. In this sense, a programmer's definition of a function
+            is a bit more flexible than that of a mathematician. 
+          </p> <p>
+            In Python, to define a function we start with the <code>def</code> keyword
+            followed by the function's name, any input variable sin parentheses, and a colon.
+            The indented code after the colon is what defines the action of the function.
+          </p> <hr/>
+
+          <example id="exmA.17">
+            <h3>Example A.17</h3> <p>
+              The following code defines the polynomial <math>
+                \(f(x) = x^3 + 3x^2 + 3x + 1\)
+              </math> and then evaluates the function at the point
+              <math>\(x=2.3\)</math>.
+            </p> <pre><code block>
+              def f(x):
+                return (x**3 + 3*x**2 + 3*x + 1)
+              print(f(2.3))
+            </code></pre>
+          </example>
+          <hr/>
+
+          <p>
+            Take careful note of several things in the previous example;
+          </p> <ul>
+            <li>
+              To define the function, we can not just type it like we would
+              see it on paper. This is not how Python recognizes a function.
+            </li> <li>
+              Once we have the function defined we can call upon it just like
+              we would on paper.
+            </li> <li>
+              We cannot pass symbols into this type of function. See the section
+              on <code>sympy</code> in this chapter if you want to do symbolic
+              computation.
+            </li>
+          </ul>
+          <hr/>
+
+          <exercise id="exrA.12">
+            <h3>Exercise A.12</h3> <p>
+              Define the function <math>\(g(n) = n^2 + n + 41\)</math>
+              as a Python function.
+              Write a loop that gives the output
+              for this function for integers from <math>\(n=0\)</math>
+              to <math>\(n=39\)</math>.
+              It is curious that each of these outputs is a prime number
+              (check this on your own.)
+              Will the function produce a prime for <math>\(n=40\)</math>?
+              For <math>\(n=41\)</math>?
+            </p>
+          </exercise>
+          <hr/>
+
+          <example id="exmA.18">
+            <h3>Example A.18</h3> <p>
+              One cool thing that you can do with Python functions is call them
+              recursively. That is, you can call the same function from within
+              the function itself. This turns out to be really handy in several
+              mathematical situations.
+            </p> <p>
+              The classic example is the factorial operation. Let's define
+              a function for that. This function is naturally going to be recursive,
+              which means that it calls itself.
+            </p> <pre><code block>
+              def Fact(n):
+                if n == 0:
+                  return 1
+                else:
+                  return (n * Fact(n - 1))
+                # Note: we are calling the function recursively.
+            </code></pre> <p>
+              When you run this code, there will be no output.
+              You have just defined the function so you can use it later.
+              So let's use it to make a list of the first several factorials.
+              Note the use of a for loop in the following code.
+            </p> <pre><code block>
+              FactList = [Fact(n) for n in range(0, 10)]
+              print(FactList)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.19">
+            <h3>Example A.19</h3> <p>
+              For this next example, let's define the sequence
+              <math> \[x_{n+1} = \left\{
+                \begin{array}{ll} 2x_n, & x_n \in [0,0.5]
+                \\ 2x_n - 1, & x_n \in (0.5,1] \end{array}
+                \right.\]
+              </math> as a function and then build a loop to find the first several
+              members of the sequence starting at any real number between 0 and 1.
+            </p> <pre><code block>
+              # Define the function
+              def MySeq(xn):
+                if xn &lt;= 0.5:
+                  return 2*xn
+                else:
+                  return 2*xn - 1
+              # Now build a sequence with this function
+              x = [0.125] # arbitrary starting point
+              for n in range(0, 5): # just the first 5 terms
+                x.append(MySeq(x[-1]))
+              print(x)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.20">
+            <h3>Example A.20</h3> <p>
+              A fun way to approximate the square root of two is to start with any
+              positive real number and iterate over the sequence
+              <math>\[x_{n+1} = \frac{1}{2} x_n + \frac{1}{x_n}\]</math>
+              until we are within any tolerance we like of the square root of
+              <math>\(2\)</math>. Write code that defines the sequence as a function
+              and then iterates in a while loop until we are within <math>\(10^{-8}\)</math>
+              of the square root of 2. <br/>
+              Hint: Import the <code>math</code> package so that you get the square root.
+              More about packages in the next section.
+            </p> <pre><code block>
+              from math import sqrt
+              def f(x):
+                return 0.5*x + 1/x
+              x = 1.1 # arbitrary starting point
+              print("approximation \t\t exact \t\t abs error")
+              while abs(x - sqrt(2)) > 10**(-8):
+                x = f(x)
+                print(x, sqrt(2), abs(x - sqrt(2)))
+            </code></pre>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.13">
+            <h3>Exercise A.13</h3> <p>
+              The previous example is a special case of the Babylonian algorithm for
+              calculating square roots. If you want the square root of <math>\(S\)</math>,
+              iterate the sequence <math>
+                \[x_{n+1} = \frac{1}{2} \left( x_n + \frac{S}{x_n} \right)\]
+              </math> until you are within an appropriate tolerance.
+            </p> <p>
+              Modify the code given in the previous example to give a list of approximations
+              of the square roots of the natural numbers 2 through 20, each to within
+              <math>\(10^{-8}\)</math>. This problem will require that you build a function,
+              write a <code>for</code> loop for the integers 2-20, and write a 
+              <code>while</code> loop inside your <code>for</code> loop to do the calculation.
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.4.7">
+          <h2>A.4.7 - Lambda Functions</h2> <p>
+            Using <code>def</code> to define functions as in the previous subsection
+            is really nice when you have a function that is complicated or requires some
+            bit of code to evaluate. However, in the case of mathematical functions,
+            we have a convenient alternative: the <code>lambda</code> functions.
+          </p> <p>
+            The basic idea of a <code>lambda</code> function is that we just want to state
+            what the variable is and what the rule is for evaluating the function.
+            This is the most like the way that we write mathematical functions.
+            For example, let's define the mathematical function <math>\(f(x) = x^2+3\)</math>
+            in two different ways:
+          </p> <ul>
+            <li>
+              As a Python function with <code>def</code>:<pre><code block>
+                def f(x):
+                  return (x**2 + 3)
+              </code></pre>
+            </li> <li>
+              As a <code>lambda</code> function: <pre><code block>
+                f = lambda x: x**2 + 3
+              </code></pre>
+            </li>
+          </ul> <p>
+            You can see that in the Lambda function we are explicitly stating the name
+            of the variable immediately after the word <code>lambda</code>, then we
+            write a colon, and then the function definition.
+          </p> <p>
+            Now if we want to evaluate the function at any point, say <math>\(x=1.5\)</math>,
+            then we can write code just like we would mathematically: <math>\(f(1.5)\)</math>
+          </p> <pre><code block>
+            f = lambda x: x**2 + 3
+            print(f(1.5)) # evaluate the function at x=1.5
+          </code></pre> <p>
+            where the result is exactly the floating point number we are interested in.
+          </p> <p>
+            The distinct mathematical advantage for using <code>lambda</code> functions is that
+            the code for setting up a lambda function is about as close as we're going to get
+            to a mathematically defined function as we would write it on paper, but the code for
+            evaluating a <code>lambda</code> function is <em>exactly</em> what we would write
+            on paper. Additionally, there is less coding overhead than for defining a function normally.
+          </p> <p>
+            We can also define lambda functions of several variables. For example, if we want to
+            define the mathematical function <math>\(f(x,y) = x^2 + xy + y^3\)</math>,
+            we could write the code
+          </p> <pre><code block>
+            f = lambda x, y: x**2 + x*y + y**3
+          </code></pre> <p>
+            If we wanted the value <math>\(f(2, 4)\)</math> we could now write the code <code>f(2, 4)</code>.
+          </p>
+          <hr/>
+
+          <example id="exmA.21">
+            <h3>Example A.21</h3> <p>
+              You may recall Euler's Method from your differential equations training.
+              Euler's Method will give a list of approximate values of the solution to
+              a first order differential equation at given times.
+            </p> <p>
+              Consider the differential equation <math>\(x' = -0.25x + 2\)</math>
+              with the initial condition <math>\(x(0) = 1.1\)</math>.
+              We can define the right hand side of the differential equation as a
+              <code>lambda</code> function in our code so that we can call it over and
+              over again in our Euler's Methodo solution.
+              We'll take 10 Euler steps starting at the proper initial condition.
+              Pay particular attention to how we use the <code>lambda</code> function.
+            </p> <pre><code block>
+              import numpy as np
+              RightSide = lambda x: -0.25*x + 2 # define the right hand side
+              dt = 0.125 # define the delta t in Euler's Method
+              t = [0] # initial value
+              x = [1.1] # initial condition
+              for n in range(0, 10):
+                t.append(t[n] + dt) # increment the time
+                x.append(y[n] + dt * RightSide(x[n])) # approximate solution at next point
+              print(t) # print the times
+              print(np.round(x, 2)) # round the approximate x values to 2 decimal places
+            </code></pre>
+          </example>
+        </section>
+      </section>
+    </section>
+  </body>
+</html>

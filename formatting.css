@@ -20,7 +20,15 @@ html, body {
 nav {
   min-height: 100vh;
   text-wrap-mode:nowrap;
+  display: flex;
+  flex-direction: row;
+  #navtoggle {
+    writing-mode: vertical-rl;
+    font-size: 16pt;
+    height: 100vh;
+  }
 }
+.hidden { display: none; }
 main {
   min-height: 100vh;
   flex-grow: 1;

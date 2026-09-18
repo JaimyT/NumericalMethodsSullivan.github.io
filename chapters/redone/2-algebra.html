@@ -552,16 +552,20 @@
           method cuts the interval in half at every iteration. You proved in Exercise
           <a href="#2/exr2.17">2.17</a> that the error given by the bisection method
           is therefore cut in half at every iteration as well.
-          The following example demonstrate this theorem graphically.
+          The following example demonstrates this theorem graphically.
         </p>
         <hr/>
 
         <example id="exm2.1">
           <h3>Example 2.1</h3> <p>
-            you know that the bisection method cuts the interval in half at every iteration.
-            You proved in Exercise <a href="ch-algebra.html#exr:bisectionerror">2.17</a>
-            that the error given by the bisection method is therefore cut in half at every
-            iteration as well. The following example demonstrate this theorem graphically.
+            Let's solve the very simple equation <math>\(x^2 - 2 = 0\)</math> for <math>\(x\)</math>
+            to get the solution <math>\(x = \sqrt{2}\)</math> with the bisection method.
+            Since we know the exact answer we can compare the exact answer to the value of
+            the midpoint given at each iteration and calculate an absolute error:
+            <math block>\[
+              \text{Absolute Error} = | \text{Approximate Solution} -
+              \text{Exact Solution}|.
+            \]</math>
           </p>
         </example>
         <hr/>
