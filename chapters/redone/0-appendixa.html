@@ -1095,6 +1095,575 @@
               print(np.round(x, 2)) # round the approximate x values to 2 decimal places
             </code></pre>
           </example>
+          <hr/>
+
+          <exercise id="exrA.14">
+            <h3>Exercise A.14</h3> <p>
+              Go back to exercise A.12 and repeat this exercise using a <code>lambda</code>
+              function instead of a multiline function.
+            </p>
+          </exercise>
+          <hr/>
+          <exercise id="exrA.15">
+            <h3>Exercise A.15</h3> <p>
+              Go back to exercise A.13 and repeat this exercise using a <code>lambda</code>
+              function instead of a multiline function.
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.4.8">
+          <h2>A.4.8 - Packages</h2> <p>
+            Unlike mathematical programming languages like MATLAB, Maple, or Mathematica,
+            where every package is already installed and ready to use, Python allows you
+            to only load the packages that you might need for a given task.
+            There are several advantages to this along with a few disadvantages.
+          </p> <h3>
+            Advantages:
+          </h3> <ul>
+            <li>
+              You can have the same function doing different things in different
+              scenarios. For example, there could be a symbolic differentiation function
+              and a numerical differentiation function coming from different packages
+              that are used in different ways.
+            </li> <li>
+              Housekeeping. It is highly advantageous to have a good understanding of
+              where your functions come from. MATLAB, for example, uses the same name
+              for multiple purposes with no indication of how it might behave depending
+              on the inputs. With python, you can avoid that by only importing the
+              appropriate packages for your current use.
+            </li> <li>
+              Your code will be ultimately more readable. More on this later.
+            </li>
+          </ul> <h3>
+            Disadvantages:
+          </h3> <ul>
+            <li>
+              It is often challenging to keep track of which function does which task
+              when they have exactly the same name. For example, you could be working
+              with the <code>sin()</code> function numerically from the <code>numpy</code>
+              package or symbolically from the <code>sympyp</code> package, and these
+              functions will behave differently in Python even though they are exactly
+              the same mathematically.
+            </li> <li>
+              You need to remember which functions live in which packages so that you can
+              load the right ones. It is helpful to keep a list of commonly used packages
+              and functions at least while you're getting started.
+            </li>
+          </ul><p>
+            Let's start with the <code>math</code> package.
+          </p>
+          <hr/>
+
+          <example id="exmA.22">
+            <h3>Example A.22</h3> <p>
+              The code below imports the <code>math</code> package into your instance
+              of Python and calculates the cosine of <math>\(\pi/4\)</math>.
+            </p> <pre><code block>
+              import math
+              x = math.cos(math.pi / 4)
+              print(x)
+            </code></pre> <p>
+              The answer, unsurprisingly, is the decimal form of <math>\(\sqrt{2}/2\)</math>.
+            </p>
+          </example>
+          <hr/>
+
+          <p>
+            You might already see a potential disadvantage to Python's packages:
+            there is now more typing involved! Let's fix this.
+            When you import a package you could just import all of the functions so
+            they can be used by their proper names.
+          </p>
+
+          <example id="exmA.23">
+            <h3>Example A.23</h3> <p>
+              Here we import the entire math package so we can use every one of the
+              functions therein without having to use the <code>math</code> prefix.
+            </p> <pre><code block>
+              from math import * # read this as: from math import everything
+              x = cos(pi / 4)
+              print(x)
+            </code></pre> <p>
+              The end result is exactly the same: the decimal form of
+              <math>\(\sqrt{2}/2\)</math>, but now we had less typing to do.
+            </p>
+          </example>
+          <hr/>
+
+          <example id="exmA.24">
+            <h3>Example A.24</h3> <p>
+              Here we import <code>math</code> and <code>numpy</code> under aliases so we
+              can use the shortened aliases and not mix up which functions belong to which packages.
+            </p> <pre><code block>
+              import math as ma
+              import numpy as np
+              # use the math version of the cosine function
+              x = ma.cos(ma.pi / 4) 
+              # use the numpy version of the cosine function
+              y = np.cos(np.pi / 4) 
+              print(x, y)
+            </code></pre> <p>
+              Both <code>x</code> and <code>y</code> in the code give the decimal approximation
+              of <math>\(\sqrt{2}/2\)</math>. This is clearly pretty redundant in this really
+              simple case, but you should be able to see where you might want to use this and
+              where you might run into trouble.
+            </p>
+          </example>
+          <hr/>
+
+          <example id="exmA.25">
+            <h3>Example A.25 - Contents of a Library</h3> <p>
+              Once you have a package imported you can see what is inside of it using
+              the <code>dir</code> function.
+              The following block of code prints a list of all the functions inside
+              the <code>math</code> package.
+            </p> <pre><code block>
+              import math
+              print(dir(math))
+            </code></pre>
+          </example>
+          <hr/>
+
+          <p>
+            of course, there will be times when you need help with a function.
+            You can use the <code>help</code> function to view the documentation
+            for most Python functions.
+            For example, you can run the code <code>help(math.acos)</code> to
+            get help on the arc cosine function from the <code>math</code> package.
+          </p>
+          <hr/>
+
+          <exercise id="exrA.16">
+            <h3>Exercise A.16</h3> <p>
+              Import the <code>math</code> package, figure out how the <code>log</code>
+              function works, and write code to calculate the logarithm of the number
+              <code>8.3</code> in base 10, base 2, base 16, and base <math>\(e\)</math>
+              (the natural logarithm.)
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+      </section>
+
+      <section id="A.5">
+        <h2>A.5 - Numerical Python with <code>numpy</code></h2> <p>
+          The base implementation of Python includes the basic programming language,
+          the tools to write loops, check conditions, build and manipulate lists,
+          and all of the other things that we saw in the previous section.
+          In this section, we will explore the <code>numpy</code> package
+          that contains optimized routines for doing numerical computations in
+          scientific computing.
+        </p>
+        <hr/>
+
+        <example id="exmA.26">
+          <h3>Example A.26</h3> <p>
+            To start with, let's look at a really simple example.
+            Say you have a list of real numbers and you want to take the sine of every
+            element in the list. If you just try to take the sine of the list,
+            you will get an error. Try it yourself.
+          </p> <pre><code block>
+            from math import pi, sin
+            MyList = [0,pi/6, pi/4, pi/3, pi/2, 2*pi/3, 3*pi/4, 5*pi/6, pi]
+            sin(MyList)
+          </code></pre> <p>
+            You could get around this error using some of the tools from base Python,
+            but none of them are very elegant.
+          </p> <pre><code block>
+            from math import pi, sin
+            MyList = [0,pi/6, pi/4, pi/3, pi/2, 2*pi/3, 3*pi/4, 5*pi/6, pi]
+            SineList = [sin(n) for n in MyList]
+            print(SineList)
+          </code></pre>
+          <p> or </p>
+          <pre><code block>
+            from math import pi, sin
+            MyList = [0,pi/6, pi/4, pi/3, pi/2, 2*pi/3, 3*pi/4, 5*pi/6, pi]
+            SineList = [ ]
+            for n in range(0,len(MyList)):
+                SineList.append( sin(MyList[n]) )
+            print(SineList)
+          </code></pre> <p>
+            Even more simply, say we wanted to just square every number in a list.
+            Just appending the code <code>**2</code> to the end of the list will fail.
+          </p> <pre><code block>
+            Mylist = [1, 2, 3, 4]
+            print(MyList**2) # This will produce an error
+          </code></pre> <p>
+            If we define the list as a <code>numpy</code> array instead of a Python list
+            then everything will work mathematically exactly the way you'd expect.
+          </p> <pre><code block>
+            MyList = np.array([1, 2, 3, 4])
+            print(Mylist**2) # This will work as expected!
+          </code></pre> <p>
+            You should stop now and try to take the sine of a full list of numbers
+            stored in a <code>numpy</code> array.
+          </p>
+        </example>
+        <hr/>
+
+        <p>
+          The <code>numpy</code> package is used in many (most) mathematical computations
+          in numerical analysis using Python. It provides algorithms for matrix and vector
+          arithmetic. Furthermore, it is optimized to do these computations in the most
+          efficient possibly way (both in terms of memory and speed.)
+        </p> <p>
+          Typically when we import <code>numpy</code> we use <code>import numpy as np</code>.
+          This is the standard alias for the <code>numpy</code> package.
+          This means that any time we want to access one of the functions in the <code>numpy</code>
+          package, we only need to prefix it with "np."
+          Let's see what is inside the package with the code <code>print(dir(np))</code>.
+          (Don't forget to <code>import numpy as np</code> first!)
+        </p> <p>
+          A brief look through the list reveals a huge wealth of mathematical functions that
+          are optimized to work in the best possible way with the Python language.
+          (We are intentionally not including the output here since it is quite extensive.
+          Run it so you can see.)
+        </p>
+
+        <section id="A.5.1">
+          <h2>A.5.1 - Numpy Arrays, Array Operations, and Matrix Operations</h2> <p>
+            In the previous section you worked with Python lists. As we pointed out, the
+            shortcoming of Python lists is that they don't behave well when we want to
+            apply mathematical functions to use them as vectors.
+            The "numpy array" <code>np.array</code> is essentially the same as a Python
+            list with the following notable exceptions:
+          </p> <ul>
+            <li>
+              In a <code>numpy</code> array, every entry is a floating point number.
+            </li> <li>
+              In a <code>numpy</code> array, the memory usage is more efficient.
+              (Mostly since Python is expecting data of all the same type.)
+            </li> <li>
+              With a <code>numpy</code> array there are ready-made functions that can
+              act directly on the array as a matrix or vector.
+            </li>
+          </ul> <p>
+            Let's just look at a few examples using <code>numpy</code>.
+            What we're going to do is define a matrix <math>\(A\)</math> and vectors
+            <math>\(v\)</math> and <math>\(w\)</math> as <math>
+              \[A = \begin{pmatrix}
+                1 & 2 \\ 3 & 4
+              \end{pmatrix},
+              \quad v = \begin{pmatrix}
+                5 \\ 6
+              \end{pmatrix},
+              \quad \text{and}
+              \quad w = v^T = \begin{pmatrix}
+                5 & 6
+              \end{pmatrix}.\]
+            </math>
+            Then we'll do the following:
+          </p> <ul>
+            <li>Get the size and shape of these arrays</li>
+            <li>Get individual elements, rows, and columns from these arrays</li>
+            <li>
+              Treat these arrays as with linear algebra to...
+              <ul>
+                <li>do element-wise multiplication</li>
+                <li>do matrix and vector products</li>
+                <li>do scalar multiplication</li>
+                <li>take the transposition of matrices</li>
+                <li>take the inverse of matrices</li>
+              </ul>
+            </li>
+          </ul>
+
+          <example id="exmA.27">
+            <h3>Example A.27 - <code>numpy</code> Matrices</h3> <p>
+              The first thing to note is that internally a matrix is a list
+              of lists. (Each row is a list.)
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1, 2], [3, 4]])
+              print("The matrix A is:\n", A)
+              v = np.array([[5], [6]]) # this creates a column vector
+              print("The vector v is:\n", v)
+              w = np.array([5, 6])
+              print("The vector w is:\n", w)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.28">
+            <h3>Example A.28 - <code>variable.shape</code></h3> <p>
+              The <code>variable.shape</code> function can be used to find the "shape"
+              and dimensions of a <code>numpy</code> array.
+              Notice that the output is a tuple showing the size in the form <code>(rows, columns)</code>.
+              Also notice that the row vector doesn't give <code>(1, 2)</code> as expected.
+              Instead, it just returns <code>(2,)</code>.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1,2],[3,4]])
+              print(A.shape) # Shape of the matrix A
+              v = np.array([[5],[6]])
+              print(v.shape) # Shape of the column vector v
+              w = np.array([5,6])
+              print(w.shape) # Shape of the row vector w
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.29">
+            <h3>Example A.29 - <code>variable.size</code></h3> <p>
+              The <code>variable.size</code> function can be used to get the total number
+              of elements in a <code>numpy</code> array.
+              This is usually the product of the values in the tuple coming from the shape function.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1,2],[3,4]])
+              v = np.array([[5],[6]])
+              w = np.array([5,6])
+              print(A.size) # Size (number of elements) of A
+              print(v.size) # Size (number of elements) of v
+              print(w.size) # Size (number of elements) of w
+            </code></pre>
+          </example>
+          <hr/>
+
+          <p>
+            Reading individual elements from a <code>numpy</code> array is essentially
+            the same as reading elements from a normal Python list.
+            We will use square brackets to get the row and column.
+            Remember that the indexing all starts from 0, not 1!
+          </p>
+
+          <example id="exmA.30">
+            <h3>Example A.30</h3> <p>
+              Let's read the top left and bottom right entries of the matrix <math>\(A\)</math>.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1, 2], [3, 4]])
+              print(A[0,0]) # top left
+              print(A[1,1]) # bottom right
+            </code></pre>
+          </example>
+          <hr/>
+          
+          <example id="exmA.31">
+            <h3>Example A.30</h3> <p>
+              Let's read the first row of the matrix <math>\(A\)</math>.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1, 2], [3, 4]])
+              print(A[0,:])
+            </code></pre>
+          </example>
+          <hr/>
+          
+          <example id="exmA.32">
+            <h3>Example A.30</h3> <p>
+              Let's read the second colummn of the matrix <math>\(A\)</math>.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1, 2], [3, 4]])
+              print(A[:,1])
+            </code></pre> <p>
+              Notice when we read the column it was not displayed as a column.
+              Be careful. Reading a column from a matrix will automatically
+              flatten it into an array, not a matrix.
+            </p>
+          </example>
+          <hr/>
+
+          <p>
+            If we try to multiply either <math>\(A\)</math> and <math>\(v\)</math> or
+            <math>\(A\)</math> and <math>\(A\)</math> we will get some funky results.
+            Unlike programming languages like MATLAB, the default notion of multiplication
+            is NOT matrix multiplication.
+            Instead, the default is element-wise multiplication.
+          </p>
+
+          <hr/>
+          <example id="exmA.33">
+            <h3>Example A.33</h3> <p>
+              If we write the code <code>A * A</code> we do NOT get matrix multiplication.
+              Instead we get element-by-element multiplication.
+              This is a common source of issues when dealing with matrices and linear algebra in Python.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1,2],[3,4]])
+              # Notice that A*A is NOT the same as A*A with matrix mult.
+              print(A * A) 
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.34">
+            <h3>Example A.34</h3> <p>
+              If we write <code>A * v</code>, Python will do element-wise multiplication
+              across each column since <math>\(V\)</math> is a column vector.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.array([[1,2],[3,4]])
+              v = np.array([[5],[6]])
+              print(A * v)
+              # A * v will do element wise multiplication on each column
+            </code></pre>
+          </example>
+          <hr/>
+
+          <p>
+            If, however, we recast these arrays as matrices we can get them to behave
+            as we would expect from linear algebra.
+            It is up to you to check that these products are indeed correct form the definitions
+            of matrix multiplication in linear algebra.
+          </p>
+
+          <example id="exmA.35">
+            <h3>Example A.35</h3> <p>
+              Recasting the <code>numpy</code> arrays as matrices allows you to use
+              multiplication as we would expect from linear algebra.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.matrix([[1, 2], [3, 4]])
+              v = np.matrix([[5], [6]])
+              w = np.matrix([5, 6])
+              print("The product A*A is:\n", A*A)
+              print("The product A*v is:\n", A*v)
+              print("The product w*A is:\n", w*A)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.36">
+            <h3>Example A.36 - Matrix Transpose</h3> <p>
+              Taking the transposition of a matrix (swapping the rows and columns)
+              is done with the <code>matrix.T</code> property.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.matrix([[1,2],[3,4]])
+              print(A.T) # Transpose the array
+            </code></pre>
+          </example>
+          <hr/>
+          <example id="exmA.37">
+            <h3>Example A.37 - Matrix Inverse</h3> <p>
+              The inverse of a square matrix is retrieved
+              using the <code>matrix.I</code> property.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.matrix([[1,2],[3,4]])
+              Ainv = A.I # Taking the inverse is also pretty simple
+              print(Ainv)
+              print(A * Ainv) # check that we get the identity matrix back
+            </code></pre>
+          </example>
+          <hr/>
+          <example id="exmA.38">
+            <h3>Example A.38 - Matrix Determinant</h3> <p>
+              The determinant operation is hiding under the <code>linalg</code>
+              subpackage inside <code>numpy</code>.
+              To call it, we will need to specify that.
+            </p> <pre><code block>
+              import numpy as np
+              A = np.matrix([[1,2],[3,4]])
+              # The determinant is inside the numpy.linalg package
+              print(np.linalg.det(A))
+            </code></pre>
+          </example>
+          <hr/>
+          <example id="exmA.39">
+            <h3>Example A.39 - Matrix Trace</h3> <p>
+              The trace is done using <code>matrix.trace()</code>.
+            </p> <pre><math block>
+              import numpy as np
+              A = np.matrix([[1, 2], [3, 4]])
+              print(A.trace())
+            </math></pre> <p>
+              However the trace returns a matrix, not a scalar.
+              Thus you'll have to read the first entry (index [0, 0])
+              from the answer to get just the trace.
+            </p>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.17">
+            <h3>Exercise A.17</h3> <p>
+              Now that we can do some basic linear algebra with <code>numpy</code>
+              it is your turn. Define the matrix <math>\(B\)</math> and the vector
+              <math>\(u\)</math> as <math block>
+                \[B = \begin{pmatrix}
+                  1 & 4 & 8 \\
+                  2 & 3 & -1 \\
+                  0 & 9 & -3
+                \end{pmatrix}
+                \quad \text{and}
+                \quad u = \begin{pmatrix}
+                  6 \\ 3 \\ -7
+                \end{pmatrix}.\]
+              </math>
+              Then find:
+            </p> <ul>
+              <li><math>\(Bu\)</math></li>
+              <li><math>\(B^2\)</math> (in the traditional linear algebra sense)</li>
+              <li>The size and shape of <math>\(B\)</math></li>
+              <li><math>\(B^T u\)</math></li>
+              <li>The element-by-element product of <math>\(B\)</math> with itself</li>
+              <li>The dot product of <math>\(u\)</math> with the first row of <math>\(B\)</math></li>
+            </ul>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.5.2">
+          <h2>A.5.2 - <code>arange</code>, <code>linspace</code>, <code>zeros</code>, <code>ones</code>, and <code>meshgrid</code></h2>
+          <p>
+            There are a few built-in ways to build arrays in <code>numpy</code> that save
+            a bit of time in many scientific computation settings.
+          </p> <ul>
+            <li>
+              <code>arange</code> (array range)
+              builds an array of floating point numbers
+              with the arguments <code>start</code>, <code>stop</code>, and <code>step</code>.
+              Note that you may not actually get to the <code>stop</code> point if the distance
+              <code>stop - start</code> is not evenly divisible by <code>step</code>.
+            </li> <li>
+              <code>linspace</code> (linearly spaced points)
+              builds an array of floating point numbers starting at one point,
+              ending at the next point, and with exactly the number of points specified
+              with equal spacing in between.
+              The arguments are <code>start</code>, <code>stop</code>, and <code>count</code> (number of points).
+              In a linear space you are always guaranteed to hit the stop point exactly,
+              but you don't have direct control over the step size.
+            </li> <li>
+              The <code>zeros</code> and <code>ones</code> functions create arrays filled with zeroes or ones.
+            </li> <li>
+              <code>meshgrid</code> builds two arrays that, wen paired, make up the ordered pairs
+              for a 2D (or higher) mesh grid of points.
+              This is the same as the <code>meshgrid</code> function in MATLAB.
+            </li>
+          </ul>
+          <hr/>
+
+          <example id="exmA.40">
+            <h3>Example A.40</h3> <p>
+              The <code>np.arange</code> function is great for building sequences.
+            </p> <pre><code block>
+              import numpy as np
+              x = np.arange(0, 0.6, 0.1)
+              print(x)
+            </code></pre> <p>
+              Note: repeatedly adding 0.1 can cause problems in Python,
+              since 0.1 is not evenly divisible in binary. If you start seeing
+              unreasonable values, you can avoid the problem by using a step size
+              of 1 and dividing the result afterwards.
+            </p>
+          </example>
+          <hr/>
+
+          <example id="exmA.41">
+            <h3>Example A.41</h3> <p>
+              The <code>np.linspace</code> function builds a list with equal (linear)
+              spacing between the starting and ending values.
+            </p> <pre><code block>
+              import numpy as np
+              y = np.linspace(0, 5, 11)
+              print(y)
+            </code></pre>
+          </example>
         </section>
       </section>
     </section>
