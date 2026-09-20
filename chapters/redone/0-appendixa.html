@@ -1664,6 +1664,213 @@
               print(y)
             </code></pre>
           </example>
+          <hr/>
+
+          <example id="exmA.42">
+            <h3>Example A.42</h3> <p>
+              The <code>np.zeros</code> function builds an array of zeroes.
+              This is handy for pre-allocating entries, for example if each entry
+              represents a sum that will have numbers added to it later.
+            </p> <pre><code block>
+              import numpy as np
+              z = np.zeros((3, 5)) # Create a 3x5 matrix of zeroes
+              print(z)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.43">
+            <h3>Example A.43</h3> <p>
+              The <code>np.ones</code> function builds an array of ones.
+              This is handy for initial states, for example if each entry is a value
+              that will be multiplied later.
+            </p> <pre><code block>
+              import numpy as np
+              u = np.ones((3, 5)) # Create a 3x5 matrix of ones
+              print(u)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.44">
+            <h3>Example A.44</h3> <p>
+              The <code>np.meshgrid</code> function creates a so-called mesh grid;
+              that is, a grid with a value at every point.
+              This is handy for building 2D (or higher dimensional) arrays of data
+              for multi-variable functions. Notice that the output is defined as a tuple.
+            </p> <pre><code block>
+              import numpy as np
+              x, y = np.meshgrid(np.linspace(0, 5, 6), np.linspace(0, 5, 6))
+              print("x = ", x)
+              print("y = ", y)
+            </code></pre> <p>
+              The other thing to notice with the <code>np.meshgrid</code> function is that
+              when you lay the two matrices on top of each other, the matching entries
+              give every ordered pair in the domain.
+            </p>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.18">
+            <h3>Exercise A.18</h3> <p>
+              Now time to practice with some of these <code>numpy</code> functions.
+            </p> <ol style="list-style-type:lower-alpha">
+              <li>
+                Create a <code>numpy</code> array of the numbers 1 through 10 and square
+                every entry in the list without using an explicit loop.
+              </li> <li>
+                Create a 10x10 identity matrix and change the top right corner to a 5. <br/>
+                Hint: <code>np.identity()</code>
+              </li> <li>
+                Find the matrix-vector product of the answer to part a as a column,
+                and part b.
+              </li> <li>
+                Change the bottom row of your matrix from part b to all 3's, then change the
+                third column to all 7's, and then find the <math>\(5^{th}\)</math> power
+                of this matrix.
+              </li>
+            </ol>
+          </exercise>
+          <hr/>
+        </section>
+      </section>
+
+      <section id="A.6">
+        <h2>A.6 - Plotting with <code>matplotlib</code></h2> <p>
+          A key part of scientific computing is plotting your results or your data.
+          The tool in Python best suited to this task is the package <code>matplotlib</code>.
+          As with all of the other packages in Python, it is best to learn just the basics first
+          and then to dig deeper later.
+          One advantage to using <code>matplotlib</code> in Python is that it is modeled off of
+          MATLAB's plotting tools.
+          People comming from a MATLAB background should feel pretty comfortable here,
+          but there are some differences to be aware of.
+        </p> <p>
+          Note: We will NOT be plotting symbolically defined functions in this section.
+          The <code>plot</code> function that we will be using is reserved for numerically
+          defined plots (i.e. plots of data points,) not functions that are symbolically
+          defined. If you have a symbolically defined function and need a plot,
+          pick a domain, build some <math>\(x\)</math> data, use the function to build the
+          corresponding <math>\(y\)</math> data, and use the plotting tools discussed here.
+          If you need a plot of a symbolic function and for some reason these steps are
+          too much to ask, then look to the section of this appendix on <code>sympy</code>.
+        </p>
+
+        <section id="A.6.1">
+          <h2>A.6.1 - Basics with <code>plt.plot()</code></h2> <p>
+            We are going to start right away with an example. In this example, however,
+            we'll walk through each of the code chunks one by one so that we
+            understand how to set up a proper plot.
+            Something to keep in mind: the author strongly encourages students and readers
+            to use Jupyter notebooks for their Python coding.
+            As such, there are some tricks for getting the plots to render that only
+            apply to Jupyter notebooks.
+            If you are using Google Colab then you may not need some of them.
+          </p>
+          <hr/>
+
+          <example id="exmA.45">
+            <h3>Example A.45 - Plotting with <code>matplotlib</code></h3> <p>
+              In the first example we want to simply plot the sine function on the domain
+              <math>\(x \in [0,2\pi]\)</math>, color it green, put a grid on it,
+              and give a meaningful legend and axis labels.
+              To do so we first need to take care of a couple of housekeeping items.
+            </p> <ul>
+              <li>
+                Import <code>numpy</code> so we can take advantage of some good numerical routines.
+              </li> <li>
+                Import <code>matplotlib</code>'s <code>pyplot</code> module.
+                The standard way to do so is with the nickname <code>plt</code>,
+                the same way we use <code>np</code> for <code>numpy</code>.
+              </li>
+            </ul> <pre><code block>
+              import numpy as np
+              import matplotlib.pyplot as plt
+            </code></pre> <p>
+              In Jupyter notebooks, the plots will not show up unless you tell the notebook
+              to put them "inline." Usually, we will use the following function to get the plots
+              to show up. You do not need to do this in Google Colab.
+              The percent sign is called a <em>magic</em> command in Jupyter notebooks.
+              This is not a Python command, it is for controlling the Jupyter IDE specifically.
+            </p> <code block>%matplotlib inline</code> <p>
+              Now we'll build a <code>numpy</code> array of <math>\(x\)</math> values
+              using the <code>np.linspace</code> function and a <code>numpy</code> array
+              of <math>\(y\)</math> values for the sine function.
+            </p> <pre><code block>
+              # 100 equally spaced points from 0 to 2pi
+              x = np.linspace(0, 2*np.pi, 100)
+              y = np.sin(x)
+            </code></pre> <p>
+              Finally, build the plot with <code>plt.plot()</code>.
+              The syntax is: <code>plt.plot(x, y, 'color', ...)</code> where you have
+              several options that you can pass in. More on that later.<br/>
+              Notice that we send the plot legend in directly to the plot function.
+              This is optional and we could set the legend up separately if we like.<br/>
+              Next, we'll add the grid with <code>plt.grid()</code>.<br/>
+              Then, we'll add a legend to the plot.<br/>
+              Finally, we'll add the axis labels.<br/>
+              We end the plotting code with <code>plt.show()</code> to tell Python to finally
+              display the plot. This line of code tells Python that you're done building
+              that plot.
+            </p> <pre><code block>
+              plt.plot(x, y, "green", label = "The Sine Function")
+              plt.grid() # Add a grid to the plot
+              plt.legend() # Add a legend to the plot.
+              # Add the axis labels.
+              plt.xlabel("x axis")
+              plt.ylabel("y axis")
+              # Finally, wrap up and display the plot.
+              plt.show()
+            </code></pre>
+            <!-- Todo: add figure A.1, the sine function plot, here. -->
+          </example>
+          <hr/>
+
+          <example id="A.46">
+            <h3>Example A.46</h3> <p>
+              Now let's do a second example, but this time we want to show four different
+              plots on top of each other. When you start a figure, <code>matplotlib</code>
+              is expecting all of those plots to be layered on top of each other.
+              (Note for MATLAB users: this means that you do not need the <code>hold on</code>
+              command since it is automatically on.)
+            </p> <p>
+              In this example, we will plot:
+            </p> <math block>
+              \[y_0 = \sin(2\pi x)
+              \quad y_1 = \cos(2 \pi x)
+              \quad y_2 = y_0 + y_1
+              \quad \text{and}
+              \quad y_3 = y_0 - y_1\]
+            </math> <p>
+              on the domain <math>\(x \in [0, 1])</math> with 100 equally spaced points.
+              We'll give each of the plots a different line style, build a legend,
+              put a grid on the plot, and give axis labels.
+            </p> <pre><code block>
+              # %matplotlib inline # you may need this in Jupyter notebooks
+
+              # build the x and y values
+              x = np.linspace(0, 1, 100)
+              y0 = np.sin(2 * np.pi * x)
+              y1 = np.cos(2 * np.pi * x)
+              y2 = y0 + y1
+              y3 = y0 - y1
+
+              # plot each of the functions
+              # notice that they will be on the same axes
+              plt.plot(x, y0, "b-.", lbel = r"$y_0 = \sin(2\pi x)$")
+              plt.plot(x, y1, 'r--', label=r"$y_1 = \cos(2\pi x)$")
+              plt.plot(x, y2, 'g:', label=r"$y_2 = y_0 + y_1$")
+              plt.plot(x, y3, 'k-', label=r"$y_3 = y_0 - y_1$")
+
+              # put in a grid, legend, title, and axis labels
+              plt.grid()
+              plt.legend()
+              plt.title("Awesome Title")
+              plt.xlabel('x axis label')
+              plt.ylabel('y axis label')
+              plt.show()
+            </code></pre>
+          </example>
         </section>
       </section>
     </section>
