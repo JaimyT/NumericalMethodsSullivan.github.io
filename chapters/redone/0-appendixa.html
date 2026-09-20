@@ -1664,6 +1664,780 @@
               print(y)
             </code></pre>
           </example>
+          <hr/>
+
+          <example id="exmA.42">
+            <h3>Example A.42</h3> <p>
+              The <code>np.zeros</code> function builds an array of zeroes.
+              This is handy for pre-allocating entries, for example if each entry
+              represents a sum that will have numbers added to it later.
+            </p> <pre><code block>
+              import numpy as np
+              z = np.zeros((3, 5)) # Create a 3x5 matrix of zeroes
+              print(z)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.43">
+            <h3>Example A.43</h3> <p>
+              The <code>np.ones</code> function builds an array of ones.
+              This is handy for initial states, for example if each entry is a value
+              that will be multiplied later.
+            </p> <pre><code block>
+              import numpy as np
+              u = np.ones((3, 5)) # Create a 3x5 matrix of ones
+              print(u)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.44">
+            <h3>Example A.44</h3> <p>
+              The <code>np.meshgrid</code> function creates a so-called mesh grid;
+              that is, a grid with a value at every point.
+              This is handy for building 2D (or higher dimensional) arrays of data
+              for multi-variable functions. Notice that the output is defined as a tuple.
+            </p> <pre><code block>
+              import numpy as np
+              x, y = np.meshgrid(np.linspace(0, 5, 6), np.linspace(0, 5, 6))
+              print("x = ", x)
+              print("y = ", y)
+            </code></pre> <p>
+              The other thing to notice with the <code>np.meshgrid</code> function is that
+              when you lay the two matrices on top of each other, the matching entries
+              give every ordered pair in the domain.
+            </p>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.18">
+            <h3>Exercise A.18</h3> <p>
+              Now time to practice with some of these <code>numpy</code> functions.
+            </p> <ol style="list-style-type:lower-alpha">
+              <li>
+                Create a <code>numpy</code> array of the numbers 1 through 10 and square
+                every entry in the list without using an explicit loop.
+              </li> <li>
+                Create a 10x10 identity matrix and change the top right corner to a 5. <br/>
+                Hint: <code>np.identity()</code>
+              </li> <li>
+                Find the matrix-vector product of the answer to part a as a column,
+                and part b.
+              </li> <li>
+                Change the bottom row of your matrix from part b to all 3's, then change the
+                third column to all 7's, and then find the <math>\(5^{th}\)</math> power
+                of this matrix.
+              </li>
+            </ol>
+          </exercise>
+          <hr/>
+        </section>
+      </section>
+
+      <section id="A.6">
+        <h2>A.6 - Plotting with <code>matplotlib</code></h2> <p>
+          A key part of scientific computing is plotting your results or your data.
+          The tool in Python best suited to this task is the package <code>matplotlib</code>.
+          As with all of the other packages in Python, it is best to learn just the basics first
+          and then to dig deeper later.
+          One advantage to using <code>matplotlib</code> in Python is that it is modeled off of
+          MATLAB's plotting tools.
+          People comming from a MATLAB background should feel pretty comfortable here,
+          but there are some differences to be aware of.
+        </p> <p>
+          Note: We will NOT be plotting symbolically defined functions in this section.
+          The <code>plot</code> function that we will be using is reserved for numerically
+          defined plots (i.e. plots of data points,) not functions that are symbolically
+          defined. If you have a symbolically defined function and need a plot,
+          pick a domain, build some <math>\(x\)</math> data, use the function to build the
+          corresponding <math>\(y\)</math> data, and use the plotting tools discussed here.
+          If you need a plot of a symbolic function and for some reason these steps are
+          too much to ask, then look to the section of this appendix on <code>sympy</code>.
+        </p>
+
+        <section id="A.6.1">
+          <h2>A.6.1 - Basics with <code>plt.plot()</code></h2> <p>
+            We are going to start right away with an example. In this example, however,
+            we'll walk through each of the code chunks one by one so that we
+            understand how to set up a proper plot.
+            Something to keep in mind: the author strongly encourages students and readers
+            to use Jupyter notebooks for their Python coding.
+            As such, there are some tricks for getting the plots to render that only
+            apply to Jupyter notebooks.
+            If you are using Google Colab then you may not need some of them.
+          </p>
+          <hr/>
+
+          <example id="exmA.45">
+            <h3>Example A.45 - Plotting with <code>matplotlib</code></h3> <p>
+              In the first example we want to simply plot the sine function on the domain
+              <math>\(x \in [0,2\pi]\)</math>, color it green, put a grid on it,
+              and give a meaningful legend and axis labels.
+              To do so we first need to take care of a couple of housekeeping items.
+            </p> <ul>
+              <li>
+                Import <code>numpy</code> so we can take advantage of some good numerical routines.
+              </li> <li>
+                Import <code>matplotlib</code>'s <code>pyplot</code> module.
+                The standard way to do so is with the nickname <code>plt</code>,
+                the same way we use <code>np</code> for <code>numpy</code>.
+              </li>
+            </ul> <pre><code block>
+              import numpy as np
+              import matplotlib.pyplot as plt
+            </code></pre> <p>
+              In Jupyter notebooks, the plots will not show up unless you tell the notebook
+              to put them "inline." Usually, we will use the following function to get the plots
+              to show up. You do not need to do this in Google Colab.
+              The percent sign is called a <em>magic</em> command in Jupyter notebooks.
+              This is not a Python command, it is for controlling the Jupyter IDE specifically.
+            </p> <code block>%matplotlib inline</code> <p>
+              Now we'll build a <code>numpy</code> array of <math>\(x\)</math> values
+              using the <code>np.linspace</code> function and a <code>numpy</code> array
+              of <math>\(y\)</math> values for the sine function.
+            </p> <pre><code block>
+              # 100 equally spaced points from 0 to 2pi
+              x = np.linspace(0, 2*np.pi, 100)
+              y = np.sin(x)
+            </code></pre> <p>
+              Finally, build the plot with <code>plt.plot()</code>.
+              The syntax is: <code>plt.plot(x, y, 'color', ...)</code> where you have
+              several options that you can pass in. More on that later.<br/>
+              Notice that we send the plot legend in directly to the plot function.
+              This is optional and we could set the legend up separately if we like.<br/>
+              Next, we'll add the grid with <code>plt.grid()</code>.<br/>
+              Then, we'll add a legend to the plot.<br/>
+              Finally, we'll add the axis labels.<br/>
+              We end the plotting code with <code>plt.show()</code> to tell Python to finally
+              display the plot. This line of code tells Python that you're done building
+              that plot.
+            </p> <pre><code block>
+              plt.plot(x, y, "green", label = "The Sine Function")
+              plt.grid() # Add a grid to the plot
+              plt.legend() # Add a legend to the plot.
+              # Add the axis labels.
+              plt.xlabel("x axis")
+              plt.ylabel("y axis")
+              # Finally, wrap up and display the plot.
+              plt.show()
+            </code></pre>
+            <!-- Todo: add figure A.1, the sine function plot, here. -->
+          </example>
+          <hr/>
+
+          <example id="A.46">
+            <h3>Example A.46</h3> <p>
+              Now let's do a second example, but this time we want to show four different
+              plots on top of each other. When you start a figure, <code>matplotlib</code>
+              is expecting all of those plots to be layered on top of each other.
+              (Note for MATLAB users: this means that you do not need the <code>hold on</code>
+              command since it is automatically on.)
+            </p> <p>
+              In this example, we will plot:
+            </p> <math block>
+              \[y_0 = \sin(2\pi x)
+              \quad y_1 = \cos(2 \pi x)
+              \quad y_2 = y_0 + y_1
+              \quad \text{and}
+              \quad y_3 = y_0 - y_1\]
+            </math> <p>
+              on the domain <math>\(x \in [0, 1])</math> with 100 equally spaced points.
+              We'll give each of the plots a different line style, build a legend,
+              put a grid on the plot, and give axis labels.
+            </p> <pre><code block>
+              # %matplotlib inline # you may need this in Jupyter notebooks
+
+              # build the x and y values
+              x = np.linspace(0, 1, 100) 
+              y0 = np.sin(2 * np.pi * x)
+              y1 = np.cos(2 * np.pi * x)
+              y2 = y0 + y1
+              y3 = y0 - y1
+
+              # plot each of the functions
+              # notice that they will be on the same axes
+              plt.plot(x, y0, "b-.", lbel = r"$y_0 = \sin(2\pi x)$")
+              plt.plot(x, y1, 'r--', label=r"$y_1 = \cos(2\pi x)$")
+              plt.plot(x, y2, 'g:', label=r"$y_2 = y_0 + y_1$")
+              plt.plot(x, y3, 'k-', label=r"$y_3 = y_0 - y_1$")
+
+              # put in a grid, legend, title, and axis labels
+              plt.grid()
+              plt.legend()
+              plt.title("Awesome Title")
+              plt.xlabel('x axis label')
+              plt.ylabel('y axis label')
+              plt.show()
+            </code></pre> <p>
+              <!-- Todo: add figure A.2, plots of sine, cosine, and sums and differences. -->
+               Notice that the legend was placed automatically. There are ways to control the placement
+               of the legend if you wish, but for now just let Python and <code>matplotlib</code> 
+               have control over the placement.
+            </p>
+          </example>
+          <hr/>
+
+          <example id="exmA.47">
+            <h3>Example A.47</h3> <p>
+              Now let's create the same plot with slightly different code.
+              The <code>plot</code> function can take several <math>\((x, y)\)</math>
+              pairs in the same line of code. This can really shrink the amount of coding
+              you have to do when plotting several functions on top of each other.
+            </p> <pre><code block>
+              # The next line of code does all of the plotting of all
+              # of the functions. Notice the order: x, y, color and
+              # line style, repeat
+              import numpy as np
+              import matplotlib.pyplot as plt
+              x = np.linspace(0,1,100)
+              y0 = np.sin(2*np.pi*x)
+              y1 = np.cos(2*np.pi*x)
+              y2 = y0 + y1
+              y3 = y0 - y1
+              plt.plot(x, y0, 'b-.', x, y1, 'r--', x, y2, 'g:', x, y3, 'k-')
+              
+              plt.grid()
+              plt.legend([
+                r"$y_0 = \sin(2\pi x)$",
+                r"$y_1 = \cos(2\pi x)$",
+                r"$y_2 = y_0 + y_1$",
+                r"$y_3 = y_0 - y_1$"
+              ])
+              plt.title("Awesome Title")
+              plt.xlabel('x axis label')
+              plt.ylabel('y axis label')
+              plt.show()
+            </code></pre>
+            <!-- Todo: add figure A.3, a second plot of the sine, cosine, sums and differences -->
+          </example>
+          <hr/>
+        </section>
+
+        <section id="A.6.2">
+          <h2>A.6.2 - Subplots</h2> <p>
+            It is often very handy to place plots side-by-side or as some array of plots.
+            The <code>subplots</code> function allows us that control.
+            The main idea is that we are setting up a matrix of blank plots and then
+            populating the axes with the plots that we want.
+          </p>
+
+          <example id="exmA.48">
+            <h3>Example A.48</h3> <p>
+              Let's repeat the previous exercise, but this time we will put each of the plots
+              in its own subplot.
+              There are a few extra coding quirks that come along with building subplots
+              so we'll highlight each block of code separately.
+            </p> <ul>
+              <li>
+                First we set up the plot area with <code>plt.subplots()</code>.
+                The first two inputs to the <code>subplots</code> function are the number of
+                rows and the number of columns in your plot array.
+                For the first example we will do 2 rows of plots with 2 columns so there are
+                four plots total.
+                The last input for the <code>subplots</code> function is the size of the figure.
+                This is really just so that it shows up well in Jupyter notebooks.
+                Spend some time playing with the figure size to get it to look right.
+              </li> <li>
+                Then we build each plot individually, telling <code>matplotlib</code>
+                which axes to use for each of the things in the plots.
+              </li> <li>
+                Notice the small differences in how we set the titles and labels.
+              </li> <li>
+                In this example we are setting the <math>\(y\)</math> axis to the interval
+                <math>\([-2,2]\)</math> for consistency across all of the plots.
+              </li>
+            </ul> <pre><code block>
+              # set up the blank matrix of plots
+              import numpy as np
+              import matplotlib.pyplot as plt
+              x = np.linspace(0,1,100)
+              y0 = np.sin(2*np.pi*x)
+              y1 = np.cos(2*np.pi*x)
+              y2 = y0 + y1
+              y3 = y0 - y1
+              
+              fig, axes = plt.subplots(nrows = 2, ncols = 2, figsize = (10,5))
+              
+              # Build the first plot
+              axes[0,0].plot(x, y0, 'b-.')
+              axes[0,0].grid()
+              axes[0,0].set_title(r"$y_0 = \sin(2\pi x)$")
+              axes[0,0].set_ylim(-2,2)
+              axes[0,0].set_xlabel("x")
+              axes[0,0].set_ylabel("y")
+              
+              # Build the second plot
+              axes[0,1].plot(x, y1, 'r--')
+              axes[0,1].grid()
+              axes[0,1].set_title(r"$y_1 = \cos(2\pi x)$")
+              axes[0,1].set_ylim(-2,2)
+              axes[0,1].set_xlabel("x")
+              axes[0,1].set_ylabel("y")
+              
+              # Build the first plot
+              axes[1,0].plot(x, y2, 'g:')
+              axes[1,0].grid()
+              axes[1,0].set_title(r"$y_2 = y_0 + y_1$")
+              axes[1,0].set_ylim(-2,2)
+              axes[1,0].set_xlabel("x")
+              axes[1,0].set_ylabel("y")
+              
+              # Build the first plot
+              axes[1,1].plot(x, y3, 'k-')
+              axes[1,1].grid()
+              axes[1,1].set_title(r"$y_3 = y_0 - y_1$")
+              axes[1,1].set_ylim(-2,2)
+              axes[1,1].set_xlabel("x")
+              axes[1,1].set_ylabel("y")
+              
+              fig.tight_layout()
+              plt.show()
+            </code></pre> <p>
+              The <code>fig.tight_layout()</code> function makes the plot labels a bit more
+              readable in this instance. (again, something you can play with.)
+            </p>
+            <!-- Todo: add figure A.4, an example of subplots -->
+          </example>
+          <hr/>
+
+          <exercise id="exrA.20">
+            <h3>Exercise A.20</h3> <p>
+              Put the functions <math>\(f(x) = x^2\)</math>, <math>\(g(x) = x^3\)</math>,
+              and <math>\(h(x) = x^4\)</math> in a subplot environment with 1 row and
+              3 columns of plots. Use the unit interval as the domain and range for all three
+              plots, but be sure that each plot has a grid, appropriate labels, and an
+              appropriate title. Also be sure that the overall figure has a title.
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.6.3">
+          <h2>A.6.3 - Logarithmic Scaling with <code>semilogy</code>, <code>semilogx</code>, and <code>loglog</code></h2>
+          <p>
+            It is occasionally useful to scale an axis logarithmically. This arises most often
+            when we're examining an exponential or some other function that is close to zero
+            for much of the domain. Scaling logarithmically allows us to see how small the
+            function is getting in orders of magnitude instead of as a raw real number.
+            We'll use this often in numerical methods.
+          </p>
+          <hr/>
+
+          <example id="exmA.49">
+            <h3>Example A.49</h3> <p>
+              In this example, we'll plot the function <math>\(y = 10^{-0.01x}\)</math>
+              on a regular (linear) scale and on a logarithmic scale on the <math>\(y\)</math>
+              axis. Use the interval <math>\([0, 500]\)</math>.
+            </p> <pre><code block>
+              import numpy as np
+              import matplotlib.pyplot as plt
+              x = np.linspace(0,500,1000)
+              y = 10**(-0.01*x)
+              fig, axis = plt.subplots(1,2, figsize = (10,5))
+              
+              axis[0].plot(x,y, 'r')
+              axis[0].grid()
+              axis[0].set_title("Linearly scaled y axis")
+              axis[0].set_xlabel("x")
+              axis[0].set_ylabel("y")
+              
+              axis[1].semilogy(x,y, 'k--')
+              axis[1].grid()
+              axis[1].set_title("Logarithmically scaled y axis")
+              axis[1].set_xlabel("x")
+              axis[1].set_ylabel("Log(y)")
+              plt.show()
+            </code></pre> <p>
+              It should be noted that the same result can be achieved using the
+              <code>yscale</code> function along with the <code>plot</code>
+              function instead of <code>semilogy</code>.
+              Pay careful attention to the subtle changes in the following code.
+            </p> <pre><code block>
+              import numpy as np
+              import matplotlib.pyplot as plt
+              x = np.linspace(0,500,1000)
+              y = 10**(-0.01*x)
+              fig, axis = plt.subplots(1,2, figsize = (10,5))
+              
+              axis[0].plot(x,y, 'r')
+              axis[0].grid()
+              axis[0].set_title("Linearly scaled y axis")
+              axis[0].set_xlabel("x")
+              axis[0].set_ylabel("y")
+              
+              axis[1].plot(x,y, 'k--') # &lt;----- Notice the change here
+              axis[1].set_yscale("log") # &lt;----- And we added this line
+              axis[1].grid() axis[1].set_title("Logarithmically scaled y axis")
+              axis[1].set_xlabel("x") axis[1].set_ylabel("Log(y)")
+            </code></pre>
+            <!-- Todo: add figure A.5, an example of using logarithmic scaling -->
+          </example>
+          <hr/>
+
+          <exercise id="exrA.21">
+            <h3>Exercise A.21</h3> <p>
+              Plot the function <math>\(f(x) = x^3\)</math> for <math>\(x \in [0,1]\)</math>
+              on linearly scaled axes,
+              logarithmically scaled axis in the <math>\(y\)</math> direction,
+              logarithmically scaled axis in the <math>\(x\)</math> direction,
+              and a log-log plot with logarithmic scaling on both axes.
+              Use <code>subplots</code> to put your plots side by side.
+              Give appropriate labels, titles, etc.
+            </p>
+          </exercise>
+          <hr/>
+        </section>
+      </section>
+
+      <section id="A.7">
+        <h2>A.7 - Symbolic Python with <code>sympy</code></h2> <p>
+          In this section we will learn the tools necessary to do symbolic mathematics in Python.
+          The relevant package is <code>sympy</code> (symbolic Python) and it works much like
+          Mathematica, Maple, or MATLAB's symbolic toolbox.
+          That being said, Mathematica and Maple are designed to do symbolic computation in the
+          fastest and best possible ways, so in some sense, <code>sympy</code> is a little
+          step-sibling to these much bigger pieces of software.
+          Remember: Python is free, and this is a book on numerical analysis.
+          We will not be doing much symbolic work in this particular class, but these
+          tools do occasionally come in handy.
+        </p> <p>
+          Let's import <code>sympy</code> in the usual way.
+          We will use the alias <code>sp</code> (just like we use <code>np</code> for <code>numpy</code>.)
+          This is not a standard nickname in the Python literature, but it will suffice for our purposes.
+        </p>
+        <hr/>
+
+        <exercise id="exrA.22">
+          <h3>Exercise A.22</h3> <p>
+            Load <code>sympy</code> and use the <code>dir()</code> function to see what functions
+            are inside the <code>sympy</code> library.
+          </p>
+        </exercise>
+        <hr/>
+
+        <example id="exmA.50">
+          <h3>Example A.50</h3> <p>
+            If you include the function <code>sp.init_printing()</code> after you load
+            <code>sympy</code> you will get some nice LaTeX style output in your Jupyter notebooks.
+          </p>
+        </example>
+        <hr/>
+
+        <section id="A.7.1">
+          <h2>A.7.1 - Symbolic Variables with <code>symbols</code></h2> <p>
+            When you are working with symbolic variables, you have to tell Python that's
+            what you're doing. We actually have to type-cast the variables
+            when we name them. Otherwise, Python won't know what to do with them.
+            In other words, we need to explicitly tell it that we are working with symbols.
+          </p>
+          <hr/>
+
+          <example id="exmA.51">
+            <h3>Example A.51</h3> <p>
+              Let's define the variable <math>\(x\)</math> as a symbolic variable.
+              Then we'll define a few symbolic expressions that use <math>\(x\)</math> as a variable.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x') # note the capitalization
+            </code></pre> <p>
+              Now we'll define the function <math>\(f(x) = (x + 2)^3\)</math>
+              and spend the next few examples playing with it.
+            </p> <pre><code block>
+              f = (x + 2)**3
+              print(f)
+            </code></pre> <p>
+              Notice that the output of these lines of code is not necessarily very nicely
+              formatted as a symbolic expression. What we would really want to see is
+              <math>\((x + 2)^3\)</math>. If you include the code <code>sp.init_printing()</code>
+              after you import the <code>sympy</code> library then you should get nice LaTeX
+              style formatting in your answers.
+            </p>
+          </example>
+          <hr/>
+
+          <example id="exmA.52">
+            <h3>Example A.52</h3> <p>
+              Be careful that you are using a symbolically defined function along with your
+              symbols. For example, see the code below:
+            </p> <pre><code block>
+              # this line raises an error since it doesn't know
+              # which "sine" to use.
+              g = sin(x)
+              import sympy as sp
+              x = sp.Symbol('x')
+              g = sp.sin(x) # this one works
+              print(g)
+            </code></pre>
+          </example>
+          <hr/>
+        </section>
+
+        <section id="A.7.2">
+          <h2>A.7.2 - Symbolic Algebra</h2> <p>
+            One of the primary purposes of doing symbolic programming is to do symbolic algebra;
+            the other is typically symbolic calculus.
+            In this section, we'll look at a few of the common algebraic exercises that can be
+            handled with <code>sympy</code>.
+          </p><hr/>
+
+          <example id="exmA.53">
+            <h3>Example A.53 - Symbolic Expansion</h3> <p>
+              Expand the function <math>\(f(x) = (x + 2)^3\)</math>.
+              In other words, multiply this out fully so that it is a sum or difference
+              of monomials instead of the cube of a binomial.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              f = (x + 2)**3
+              sp.expand(f) # do the multiplication to expand the polynomial
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.54">
+            <h3>Example A.54 - Symbolic Factoring</h3> <p>
+              We will factor the polynomial <math>\(h(x) = x^2 + 4x + 3\)</math>.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              h = x**2 + 4*x + 3
+              sp.factor(h) # factor the polynomial
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.55">
+            <h3>Example A.55 - Trigonometric Simplification</h3> <p>
+              The <code>sympy</code> package knows how to work with trigonometric identities.
+              In this example we show how <code>sympy</code> expands <math>\(sin(a + b)\)</math>.
+            </p> <pre><code block>
+              import sympy as sp
+              a, b = sympy.symbols('a b')
+              j = sp.sin(a + b)
+              sp.expand(j, trig = True) # trig identities are built in!
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.56">
+            <h3>Example A.56 - Symbolic Simplification</h3> <p>
+              In this example, we will simplify the function
+              <math>\(g(x) = x^3 + 5x^3 + 12x^2 +1\)</math>
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              g = x**3 + 5*x**3 + 12*x**2 + 1
+              sp.simplify(g) # Simplify some algebraic expression
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.57">
+            <h3>Example A.57</h3> <p>
+              In this example, we'll simplify an expression that involves trigonometry.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              sp.simplify(sp.sin(x) / sp.cos(x)) # simplify a trig expression
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.58">
+            <h3>Example A.58 - Symbolic Equation Solving</h3> <p>
+              The primary goal of many algebra problems is to solve an equation.
+              We will dedicate more time to algebraic equation solving later in this section,
+              but this is a simple example of how it works in <code>sympy</code>. <br/>
+              We want to solve the equation <math>\(x^2 + 4x + 3 = 0\)</math> for <math>\(x\)</math>.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              h = x**2 + 4*x + 3
+              sp.solve(h, x)
+            </code></pre> <p>
+              As expected, the roots of the function <math>\(h(x)\)</math> are
+              <math>\(x = -3\)</math> and <math>\(x = 1\)</math>
+              since <math>\(h(x)\)</math> factors into <math>\(h(x) = (x+3)(x-1)\)</math>.
+            </p>
+          </example>
+          <hr/>
+        </section>
+
+        <section id="A.7.3">
+          <h2>A.7.3 - Symbolic Function Evaluation</h2> <p>
+            In <code>sympy</code> we cannot simply just evaluate functions as we would on paper.
+            Let's say we have the function <math>\(f(x)= (x+2)^3\)</math> and we want to find
+            <math>\(f(5)\)</math>. We would say that we "substitute 5 into f for x," and that is
+            exactly what we have to tell Python.
+            Unfortunately, we cannot just write <code>f(5)</code> since that would mean that
+            <code>f</code> is a Python function and we are sending the number 5 into that function.
+            This is an unfortunate double-use of the word "function," but stop and think about it for a
+            second: When we write <code>f = (x+2)**3</code> we are just telling Python that
+            <code>f</code> is a symbolic expression in terms of the symbol <code>x</code>,
+            but we did not use <code>def</code> to define it as a function as we did for all other functions.
+          </p>
+          <hr/>
+
+          <example id="exmA.59">
+            <h3>Example A.59</h3> <p>
+              The following code is what the mathematicians in us would like to do:
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              f = (x + 2)**3
+              f(5) # This raises an error!
+            </code></pre> <p>
+              ...but this is how it should be done:
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              f = (x + 2)**3
+              f.sub(x, 5) # This substitutes 5 for x in f
+            </code></pre>
+          </example>
+          <hr/>
+        </section>
+
+        <section id="A.7.4">
+          <h2>A.7.4 - Symbolic Calculus</h2> <p>
+            The <code>sympy</code> package has routines to take symbolic derivatives,
+            antiderivatives, limits, and Taylor series just like other computer algebra systems.
+          </p>
+
+          <section id="A.7.4.1">
+            <h3>A.7.4.1 - Derivatives</h3> <p>
+              The <code>diff</code> function in <code>sympy</code> performs differentiation:
+            </p> <code>sp.diff(function, variable, [order])</code> <p>
+              Take careful note that <code>diff</code> is defined in both <code>sympy</code> and
+              <code>numpy</code>. That means that there are symbolic and numerical routines
+              for taking derivatives in Python, and we need to tell our instance which one we're
+              working with every time we use it.
+            </p> <hr/>
+
+            <example id="exmA.60">
+              <h3>Example A.60 - Symbolic Differentiation</h3> <p>
+                In this example, we'll differentiate the function <math>\(f(x) = (x+2)^3\)</math>.
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x') # Define the symbol x
+                f = (x + 2)**3 # Define a symbolic function f(x) = (x + 2)^3
+                df = sp.diff(f,x) # Take the derivative of f and call it "df"
+                print("f(x) = ", f)
+                print("f'(x) = ",df)
+                print("f'(x) = ", sp.expand(df))
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.61">
+              <h3>Example A.61</h3> <p>
+                Now let's get the first, second, third, and fourth derivatives of the function <math>\(f\)</math>.
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x') # Define the symbol x
+                f = (x + 2)**3 # Define a symbolic function f(x) = (x + 2)^3
+                df = sp.diff(f, x, 1) # first derivative
+                ddf = sp.diff(f, x, 2) # second deriative
+                dddf = sp.diff(f, x, 3) # third deriative
+                ddddf = sp.diff(f, x, 4) # fourth deriative
+                print("f'(x) = ", df)
+                print("f''(x) = ", sp.simplify(ddf))
+                print("f'''(x) = ", sp.simplify(dddf))
+                print("f''''(x) = ", sp.simplify(ddddf))
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.62">
+              <h3>Example A.62</h3> <p>
+                Now let's do some partial derivatives. The <code>diff</code> function is still the right tool.
+                You just have to tell it which variable you're working with.
+              </p> <pre><code block>
+                import sympy as sp
+                x, y = sp.symbols('x y') # Define the symbols
+                f = sp.sin(x*y) + sp.cos(x**2) # Define the function
+                fx = sp.diff(f, x)
+                fy = sp.diff(f, y)
+                print("f(x,y) = ", f)
+                print("f_x(x,y) = ", fx)
+                print("f_y(x,y) = ", fy)
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.63">
+              <h3>Example A.63</h3> <p>
+                t is worth noting that when you have a symbolically defined function
+                you can ask <code>sympy</code> to give you the LaTeX code for
+                the symbolic function so you can use it when you write about it.
+              </p> <pre><code block>
+                import sympy as sp
+                x, y = sp.symbolx('x, y') # Define the symbols
+                f = sp.sin(x*y) + sp.cos(x**2) # Define the function
+                sp.latex(f)
+              </code></pre>
+            </example>
+            <hr/>
+          </section>
+
+          <section id="A.7.4.2">
+            <h3>A.7.4.2 - Integrals</h3> <p>
+              For integration, the <code>sp.integrate</code> function is the tool for the job.
+              <code>sp.integrate(function, variable)</code> will find an antiderivative, and
+              <code>sp.integrate(function, (variable, lower, upper))</code> will evaluate
+              a definite integral.
+            </p> <p>
+              The <code>integrate</code> function in <code>sympy</code> accepts a symbolically
+              defined function along with the variable of integration and optional bounds.
+              If the bounds aren't given, the command finds the antiderivative.
+              Otherwise, it finds the definite integral.
+            </p>
+            <hr/>
+  
+            <example id="exmA.64">
+              <h3>Example A.64</h3> <p>
+                Find the antiderivative of the function <math>\(f(x) = (x+2)^3\)</math>.
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x')
+                f = (x+2)**3
+                F = sp.integrate(f,x)
+                print(F)
+              </code></pre> <p>
+                The output of these lines of code is the expression
+                <math>\(\frac{x^{4}}{4} + 2 x^{3} + 6 x^{2} + 8 x\)</math>
+                which is indeed the antiderivative.
+              </p>
+            </example>
+            <hr/>
+
+            <example id="exmA.65">
+              <h3>Example A.65</h3> <p>
+                Consider the multivariable antiderivative <math>\[\int \sin(xy) + \cos(x) dx.\]</math>
+                The <code>sympy</code> package deals with thesecond variable just as it should.
+              </p> <pre><code block>
+                import sympy as sp
+                x, y = sp.symbols('x y')
+                g = sp.sin(x * y) + sp.cos(x)
+                G = sp.integrate(g,x)
+                print(G)
+              </code></pre> <p>
+                It is apparent that <code>sympy</code> was sensitive to the fact that there was
+                some trouble at <math>\(y=0\)</math> and took care of it with a piece wise function.
+              </p>
+            </example>
+            <hr/>
+
+            <example id="exmA.66">
+              <h3>Example A.66</h3> <p>
+                Consider the integral <math>\[\int_0^\pi \sin(x) dx.\]</math> Notice that the variable
+                and the bounds are sent to the <code>integrate</code> command as a tuple.
+                Furthermore, notice that we had to send the symbolic version of
+                <math>\(\pi\)</math> instead of any other version (e.g. <code>numpy</code>.)
+              </p>
+            </example>
+          </section>
         </section>
       </section>
     </section>
