@@ -2435,9 +2435,359 @@
                 and the bounds are sent to the <code>integrate</code> command as a tuple.
                 Furthermore, notice that we had to send the symbolic version of
                 <math>\(\pi\)</math> instead of any other version (e.g. <code>numpy</code>.)
-              </p>
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x')
+                sp.integrate(sp.sin(x), (x, 0, sp.pi))
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.67">
+              <h3>Example A.67</h3> <p>
+                This is a fun one. Let's do the definite integral
+                <math block>\[\int_{-\infty}^\infty e^{-x^2} dx.\]</math>
+              </p> <p>
+                We have to use the "infinity" symbol from <code>sympy</code>.
+                It is two lower-case o's next to each other: <code>oo</code>.
+                It kind of looks like an infinity I suppose.
+              </p> <pre><code block>
+                x = sp.Symbol('x')
+                sp.integrate(sp.exp(-x**2), (x, -sp.oo, sp.oo))
+              </code></pre>
             </example>
           </section>
+
+          <section id="A.7.4.3">
+            <h3>A.7.4.3 - Limits</h3> <p>
+              The <code>limit</code> function in <code>sympy</code> takes symbolic limits:
+              <code>sp.limit(function, variable, value, [direction])</code>
+            </p> <p>
+              The direction (left or right) is optional and if you leave it off
+              then the limit is considered from both directions.
+            </p>
+            <hr/>
+
+            <example id="exmA.68">
+              <h3>Example A.68</h3> <p>
+                Let's take the limit
+                <math block>\[\lim_{x \to 0} \frac{\sin(x)}{x}.\]</math>
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x')
+                sp.limit(sp.sin(x)/x, x, 0)
+              </code></pre>
+            </example>
+            <hr/>
+
+            <example id="exmA.69">
+              <h3>Example A.69</h3> <p>
+                Let's do the difference quotient
+              </p> <math block>
+                \[\lim_{h \to 0} \frac{ f(x+h) - f(x)}{h}\]
+              </math> <p>
+                for the function <math>\(f(x) = (x + 2)^3\)</math>.
+                Taking the limit should give the derivative so we'll check that the
+                <code>diff</code> function gives us the same thing using <code>==</code>.
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x')
+                f = (x + 2)**3
+                print(sp.diff(f, x))
+                h = sp.Symbol('h')
+                df = sp.limit((f.subs(x, x+h)) / h, h, 0)
+                print(df)
+                # notice that these are not "symbolically" equal...
+                print(df == sp.diff(f, x))
+                # but these are.
+                print(df == sp.expand(sp.diff(f, x)))
+              </code></pre> <p>
+                Notice that when we check to see if two symbolic functions are equal
+                they must be in the same exact symbolic form.
+                Otherwise <code>sympy</code> won't recognize them as actually being equal
+                even though they are mathematically equivalent.
+              </p>
+            </example>
+            <hr/>
+
+            <exercise id="exrA.23">
+              <h3>Exercise A.23</h3> <p>
+                Define the function <math>\(f(x) = 3x^2 + x\sin(x^2)\)</math>
+                symbolically and then do the following:
+              </p> <ul>
+                <li>Evaluate the function at <math>\(x=2\) and get symbolic and numerical answers.</math></li>
+                <li>Take the first and second derivatives.</li>
+                <li>Take the antiderivative.</li>
+                <li>Find the definite integral from 0 to 1.</li>
+                <li>Find the limit as <math>\(x\)</math> goes to 3.</li>
+              </ul>
+            </exercise>
+            <hr/>
+          </section>
+
+          <section id="A.7.4.4">
+            <h3>A.7.4.4 - Taylor Series</h3> <p>
+              The <code>sympy</code> package has a tool for expanding Taylor series of
+              symbolic functions: <code>sp.series(function, variable, [center], [num terms])</code>.
+            </p> <p>
+              The center defaults to 0 and the number of terms defaults to 5.
+            </p>
+            <hr/>
+
+            <example id="exmA.70">
+              <h3>Example A.70</h3> <p>
+                Find the Taylor series for <math>\(f(x)=\e^x\)</math>
+                centered at <math>\(x=0\)</math> and centered at <math>\(x=1\)</math>.
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x')
+                sp.series( sp.exp(x),x)
+                import sympy as sp
+                x = sp.Symbol('x')
+                sp.series( sp.exp(x), x, 1, 3) # expand at x=1 (3 terms)
+              </code></pre> <p>
+                Finally, if we want more terms, we can send the number of desired
+                terms to the <code>series</code> function.
+              </p> <pre><code block>
+                import sympy as sp
+                x = sp.Symbol('x')
+                sp.series(sp.exp(x), x, 0, 3) # expand at x=0 and give 3 terms
+              </code></pre>
+            </example>
+            <hr/>
+          </section>
+        </section>
+
+        <section id="A.7.5">
+          <h2>A.7.5 - Solving Equations Symbolically</h2> <p>
+            One of the big reasons to use a symbolic toolbox such as <code>sympy</code>
+            is to solve algebraic equations exactly.
+            This isn't always going to be possible, but when it is, we get some nice results.
+            The <code>solve</code> function in <code>sympy</code> is the tool for the job:
+            <code>sp.solve(equation, variable)</code>
+          </p> <p>
+            The equation argument doesn't actually need to be the whole equation.
+            For any equation-solving problem, we can always reframe it so that we are
+            solving <math>\(f(x)=0\)</math> by subtracting the right hand side
+            of the equation from the left hand side.
+            Thanks to this, we can leave the equal sign and the zero off and
+            <code>sympy</code> will still understand what we're doing.
+          </p>
+          <hr/>
+
+          <example id="exmA.71">
+            <h3>Example A.71</h3> <p>
+              Let's solve the equation <math>\(x^2 - 2 = 0\)</math> for <math>\(x\)</math>.
+              We know that the roots are <math>\(\pm \sqrt{2}\)</math>, so this
+              should be pretty trivial for a symbolic solver.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              sp.solve(x**2 - 2, x)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <example id="exmA.72">
+            <h3>Example A.72</h3> <p>
+              Now le'ts solve the equation <math>\(x^4 - x^2 - 1= 0\)</math> for
+              <math>\(x\)</math>. You might recognize this as a quadratic equation
+              in disguise, so you could definitely do it by hand...if you want to.
+              (You could also recognize that this equation is related to the golden ratio!)
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              sp.solve( x**4 - x**2 - 1, x)
+            </code></pre> <p>
+              Run the code yourself to see the output.
+              In nicer LaTeX formatting, the answer is:
+            </p> <math block>
+              \[\left[
+                -i \sqrt{
+                  -\frac{1}{2} +
+                  \frac{\sqrt{5}}{2}
+                }, \
+                i \sqrt{
+                  -\frac{1}{2} +
+                  \frac{\sqrt{5}}{2}
+                }, \
+                -\sqrt{
+                  \frac{1}{2} +
+                  \frac{\sqrt{5}}{2}
+                }, \
+                \sqrt{
+                  \frac{1}{2} +
+                  \frac{\sqrt{5}}{2}
+                }
+              \right]\]
+            </math> <p>
+              Notice that <code>sympy</code> has no problem dealing with the complex roots.
+            </p>
+          </example>
+          <hr/>
+
+          <p>
+            In the previous example, the answers may be a bit hard to read due to their
+            symbolic form. This is particularly true for more complicated equation solving problems.
+            The next example shows how you can loop through the solutions and then print them
+            in decimal form so they are a bit more readable.
+          </p>
+          <hr/>
+
+          <example id="exmA.73">
+            <h3>Example A.73</h3> <p>
+              We will again solve the equation <math>\(x^4 - x^2 - 1= 0\)</math>
+              for <math>\(x\)</math>, but this time we will output the answers as
+              floating point decimals.
+              We are using the <code>N</code> function to convert from symbolic
+              to numerical.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              soln = sp.solve( x**4 - x**2 - 1, x)
+              for j in range(0, len(soln)):
+                print(sp.N(soln[j]))
+            </code></pre> <p>
+              The <code>N</code> function gives a numerical approximation for a
+              symbolic expression. This is taken straight from Mathematica!
+            </p>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.24">
+            <h3>Exercise A.24</h3> <p>
+              Give the symbolic and floating point solutions to the equation
+              <math>\(x^4 - x^2 - x + 5 = 0\)</math>.
+            </p>
+          </exercise>
+          <hr/>
+
+          <p>
+            When you want to solve a symbolic equation numerically, you can use the
+            <code>nsolve</code> function.
+            This will do something like Newton's method in the background.
+            You need to give it a starting point where it can look for the
+            solution to your equation.
+          </p> <code>sp.nsolve(equation, variable, initial_guess)</code>
+
+          <example id="A.74">
+            <h3>Example A.74</h3> <p>
+              Let's solve the equation <math>\(x^3 - x^2 - 2\)</math> for <math>\(x\)</math>
+              both symbolically nand numerically.
+              The numerical solution with <code>nsolve</code> should search for the solution
+              near <math>\(x = 1\)</math>.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              ExactSoln = sp.solve(x**3 - x**2 - 2, x) # symbolic solution
+              print(ExactSoln)
+            </code></pre> <p>
+              Run the code yourself to see the exact solution.
+              With LaTeX formatting, the answer is:
+            </p> <math block>
+              \[\begin{aligned}
+              \left[ \frac{1}{3} + \left(- \frac{1}{2} - \frac{\sqrt{3} i}{2}\right)
+                  \sqrt[3]{\frac{\sqrt{87}}{9} + \frac{28}{27}} + \frac{1}{9 \left(- \frac{1}{2} -
+                  \frac{\sqrt{3} i}{2}\right) \sqrt[3]{\frac{\sqrt{87}}{9} + \frac{28}{27}}}, \right. \\
+                  \frac{1}{3} + \frac{1}{9 \left(- \frac{1}{2} + \frac{\sqrt{3} i}{2}\right)
+                  \sqrt[3]{\frac{\sqrt{87}}{9} + \frac{28}{27}}} + \left(- \frac{1}{2} + \frac{\sqrt{3}
+              i}{2}\right) \sqrt[3]{\frac{\sqrt{87}}{9} + \frac{28}{27}}, \\
+              \left. \frac{1}{9 \sqrt[3]{\frac{\sqrt{87}}{9} + \frac{28}{27}}} + \frac{1}{3} + \sqrt[3]{\frac{\sqrt{87}}{9} + \frac{28}{27}}\right]\end{aligned}\]
+            </math> <p>
+              Which is rather challenging to read.
+              We can give all of the floating point approximation with the following code.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              ExactSoln = sp.solve(x**3 - x**2 - 2, x) # symbolic solution
+              print("First Solution: ", sp.N(ExactSoln[0]))
+              print("Second Solution: ", sp.N(ExactSoln[1]))
+              print("Third Solution: ", sp.N(ExactSoln[2]))
+            </code></pre> <p>
+              If we were only looking for the floating point real solution near <math>\(x = 1\)</math>
+              then we could just use <code>nsolve</code>.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              NumericalSoln = sp.nsolve(x**3 - x**2 - 2, x, 1) # solution near x=1
+              print(NumericalSoln)
+            </code></pre>
+          </example>
+          <hr/>
+
+          <exercise id="exrA.25">
+            <h3>Exercise A.25</h3> <p>
+              Solve the equation and give your answer both symbolically and numerically.
+            </p> <math block>\[x^3 \ln(x) = 7\]</math>
+          </exercise>
+          <hr/>
+        </section>
+
+        <section id="A.7.6">
+          <h2>A.7.6 - Symbolic Plotting</h2> <p>
+            In this final section we will show how to make plots of symbolically
+            defined functions. Be careful here.
+            There are times when you want to plot a symbolically defined function
+            and there are times when you want to plot data.
+          </p>
+          <code block>sp.plot(function, (variable, left, right))</code>
+          <p>
+            It is easy to get confused since they both use the <code>plot</code>
+            function in their own packages (<code>sympy</code> and
+            <code>matplotlib</code> respectively.)
+          </p> <p>
+            Note: For MATLAB users, the <code>sympy.plot</code> function is similar
+            to MATLAB's <code>ezplot</code> or <code>fplot</code> functions.
+          </p> <p>
+            In numerical analysis we do not often need to make plots of symbolically
+            defined functions. There is more that could be said about <code>sympy</code>'s
+            plotting routine, but since it won't be used often in this text it doesn't
+            seem necessary to give those details here.
+            When you need to make a plot, just carefully consider whether you need a
+            symbolic plot (with <code>sympy</code>) or a plot of data points
+            (with <code>matplotlib</code>.)
+          </p>
+          <hr/>
+
+          <example id="exmA.75">
+            <h3>Example A.75</h3> <p>
+              Let's get a quick plot of the function <math>\(f(x) = (x+2)^3\)</math>
+              on the domain <math>\(x \in [-5,2]\)</math>.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              f = (x+2)**3
+              sp.plot(f,(x,-5,2))
+            </code></pre>
+            <!-- Todo: add figure A.6, a plot of symbolically defined functions -->
+          </example>
+          <hr/>
+
+          <example id="exmA.76">
+            <h3>Example A.76</h3> <p>
+              Multiple plots can be done at the same time with the
+              <code>sympy.plot</code> function.
+            </p> <p>
+              Plot <math>\(f(x) = (x+2)^3\)</math> and <math>\(g(x) = 20\cos(x)\)</math>
+              on the same axes on the domain <math>\(x \in [-5,2]\)</math>.
+            </p> <pre><code block>
+              import sympy as sp
+              x = sp.Symbol('x')
+              f = (x+2)**3
+              g = 20*sp.cos(x)
+              sp.plot(f, g, (x,-5,2))
+            </code></pre>
+            <!-- Todo: add figure A.7, a second plot of symbolically defined functions. -->
+          </example>
+          <hr/>
+
+          <exercise id="exrA.26">
+            <h3>Exercise A.26</h3> <p>
+              Make a symbolic plot of the function <math>\(f(x) = x^3 \ln(x) - 7\)</math>
+              on the domain <math>\([0, 3]\)</math>.
+            </p>
+          </exercise>
+          <hr/>
         </section>
       </section>
     </section>

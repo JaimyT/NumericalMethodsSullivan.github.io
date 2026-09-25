@@ -146,7 +146,7 @@ export default class Parser {
         if (!stat) {
           return [false, i];
         }
-        ret.push(val);
+        if (val) ret.push(val);
       }
       return [true, index, ret];
     }
@@ -203,10 +203,6 @@ export default class Parser {
       return [false, i];
     }
   }
-  static digits = new Parser.Regex(/\d+/);
-  static number = new Parser.Regex(/^[\+\-]?(([\d_]*\._*\d[\d_]*)|(_*\d[\d_]*))/);
-  static string = new Parser.Regex(/^(['"])((\\.)|[^'"])*\1/);
-  static ws = new Parser.Regex(/^\s*/);
 
   optional() {
     return new Parser.Optional(this);
@@ -237,38 +233,59 @@ export default class Parser {
      * @param {Parser} predicate 
      * @param {boolean} audit If true, the return value of the function will be the return value of exec()
      */
-    constructor(fn, predicate, audit = false) {
+    constructor(fn, predicate, mode = null) {
       super();
       this.fn = fn;
       this.predicate = predicate;
-      this.audit = audit;
+      this.mode = mode;
+    }
+
+    static modes = {
+      none: null,
+      audit: "audit",
+      transform: "transform"
     }
 
     exec(str, i = 0) {
       let ret;
       let [stat, index, val] = ret = this.predicate.exec(str, i);
-      if (this.audit) {
+      if (this.mode === Custom.modes.audit) {
         if (stat) {
           [stat, index, val] = this.fn(val, str, i, index);
         }
         if (stat) return [stat, index, val];
         return [false, i];
       }
-      if (stat) this.fn(val, str, i, index);
+      if (stat) {
+        if (this.mode === Custom.modes.transform) {
+          ret[2] = this.fn(val, str, i, index);
+        } else {
+          this.fn(val, str, i, index);
+        }
+      }
       return ret;
     }
   }
   /**
-   * @param {(val:*, source:string, start:number, end:number)=>[status:boolean, index:number, val:*]} fn
+   * @param {(val:*, source:string, start:number, end:number)=>void} fn
    */
   consume(fn) {
-    return new Parser.Custom(fn, this, false);
+    return new Parser.Custom(fn, this);
+  }
+  /**
+   * @param {(val:*, source:string, start:number, end:number)=>*} fn
+   */
+  transform(fn) {
+    return new Parser.Custom(fn, this, Parser.Custom.modes.transform);
   }
   /**
    * @param {(val:*, source:string, start:number, end:number)=>[status:boolean, index:number, val:*]} fn
    */
   audit(fn) {
-    return new Parser.Custom(fn, this, true);
+    return new Parser.Custom(fn, this, Parser.Custom.modes.audit);
+  }
+  void() {
+    return this.transform(v => {return null;});
   }
 
   joinString() {
@@ -277,4 +294,11 @@ export default class Parser {
       else return [true, end, val];
     });
   }
+
+  
+  static digits = new Parser.Regex(/^\d+/);
+  static number = new Parser.Regex(/^[\+\-]?(([\d_]*\._*\d[\d_]*)|(_*\d[\d_]*))/).transform(v => {return +v;});
+  static string = new Parser.Regex(/^(['"])((\\.)|[^'"])*\1/).transform(v => {return v.substring(1, v.length - 1);});
+  static ws = new Parser.Regex(/^\s*/).transform(v => {return null;});
+  static word = new Parser.Regex(/^\w+/);
 }
